@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Platform - AI 기반 실시간 퀴즈 학습 플랫폼</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <style>
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: var(--spacing-2xl);
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-lg);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      margin-bottom: var(--spacing-2xl);
+      opacity: 0.95;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: var(--spacing-lg);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn {
+      padding: var(--spacing-lg) var(--spacing-2xl);
+      font-size: 1.125rem;
+      font-weight: 600;
+      border-radius: var(--border-radius-lg);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .hero-btn-primary {
+      background-color: white;
+      color: #667eea;
+    }
+
+    .hero-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .hero-btn-secondary {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .hero-btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .features {
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-xl);
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .feature-card {
+      background-color: var(--bg-primary);
+      padding: var(--spacing-xl);
+      border-radius: var(--border-radius-xl);
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .feature-icon {
+      font-size: 4rem;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .feature-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.25rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">📚 Quiz Platform</h1>
+      <p class="hero-subtitle">
+        AI 기반 실시간 퀴즈 학습 플랫폼<br>
+        ChatGPT로 문제를 자동 생성하고, 실시간으로 학습하세요
+      </p>
+      <div class="hero-buttons">
+        <a href="/login.html" class="hero-btn hero-btn-primary">
+          시작하기
+        </a>
+        <a href="#features" class="hero-btn hero-btn-secondary">
+          더 알아보기
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="features" class="features">
+    <h2 class="features-title">주요 기능</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3 class="feature-title">AI 문제 생성</h3>
+        <p class="feature-description">
+          ChatGPT를 활용하여 텍스트나 파일(PDF, 이미지)로부터 
+          자동으로 문제를 생성합니다.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">실시간 퀴즈</h3>
+        <p class="feature-description">
+          학생들이 실시간으로 퀴즈를 풀고, 
+          선생님은 진행 상황을 즉시 확인할 수 있습니다.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">결과 분석</h3>
+        <p class="feature-description">
+          학생별, 문제별 통계를 확인하고 
+          엑셀로 내보낼 수 있습니다.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3 class="feature-title">복습 모드</h3>
+        <p class="feature-description">
+          완료한 퀴즈를 다시 확인하며 
+          정답과 해설을 학습할 수 있습니다.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">과목별 관리</h3>
+        <p class="feature-description">
+          영어, 수학, 과학 등 과목별로 
+          체계적으로 문제를 관리합니다.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3 class="feature-title">학생 관리</h3>
+        <p class="feature-description">
+          선생님이 직접 학생 계정을 생성하고 
+          학습 현황을 모니터링합니다.
+        </p>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: var(--spacing-2xl);">
+      <a href="/login.html" class="btn btn-primary btn-lg">
+        지금 시작하기 →
+      </a>
+    </div>
+  </div>
+
+  <footer style="background-color: var(--gray-900); color: white; padding: var(--spacing-xl); text-align: center;">
+    <p>&copy; 2024 Quiz Platform. All rights reserved.</p>
+    <p style="margin-top: var(--spacing-sm); opacity: 0.8;">Made with ❤️ for Education</p>
+  </footer>
+
+  <script>
+    // 부드러운 스크롤
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
