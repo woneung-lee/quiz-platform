@@ -1,0 +1,119 @@
+/* 인증 페이지 스타일 */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: var(--spacing-lg);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 480px;
+}
+
+.auth-card {
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.auth-header .logo {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.auth-header .subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xl);
+  background-color: var(--gray-100);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius);
+}
+
+.auth-tabs .tab-btn {
+  flex: 1;
+  padding: var(--spacing-md);
+  background: none;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.auth-tabs .tab-btn:hover {
+  color: var(--primary-color);
+}
+
+.auth-tabs .tab-btn.active {
+  background-color: var(--bg-primary);
+  color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-form {
+  margin-bottom: var(--spacing-lg);
+}
+
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--spacing-lg);
+  font-size: 0.875rem;
+}
+
+.auth-note {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--info-color);
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: var(--border-radius);
+  text-align: center;
+  color: var(--info-color);
+}
+
+.auth-note p {
+  margin-bottom: 0;
+}
+
+.auth-footer {
+  text-align: center;
+  color: white;
+  opacity: 0.8;
+}
+
+.auth-footer p {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+/* 반응형 */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .auth-header .logo {
+    font-size: 1.5rem;
+  }
+}

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="logo">📚 Quiz Platform</h1>
+        <p class="subtitle">AI 기반 실시간 퀴즈 학습 플랫폼</p>
+      </div>
+
+      <!-- 탭 선택 -->
+      <div class="auth-tabs">
+        <button class="tab-btn active" data-tab="teacher">
+          👨‍🏫 선생님 로그인
+        </button>
+        <button class="tab-btn" data-tab="student">
+          👨‍🎓 학생 로그인
+        </button>
+      </div>
+
+      <!-- 선생님 로그인 폼 -->
+      <div id="teacher-tab" class="tab-content active">
+        <form id="teacher-login-form" class="auth-form">
+          <div class="form-group">
+            <label for="teacher-email">이메일</label>
+            <input 
+              type="email" 
+              id="teacher-email" 
+              class="form-input" 
+              placeholder="email@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="teacher-password">비밀번호</label>
+            <input 
+              type="password" 
+              id="teacher-password" 
+              class="form-input" 
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-block">
+              로그인
+            </button>
+          </div>
+
+          <div class="auth-links">
+            <a href="#" id="forgot-password-link">비밀번호를 잊으셨나요?</a>
+            <a href="#" id="signup-link">회원가입</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- 학생 로그인 폼 -->
+      <div id="student-tab" class="tab-content">
+        <form id="student-login-form" class="auth-form">
+          <div class="form-group">
+            <label for="student-username">학생 아이디</label>
+            <input 
+              type="text" 
+              id="student-username" 
+              class="form-input" 
+              placeholder="student123"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="student-password">비밀번호</label>
+            <input 
+              type="password" 
+              id="student-password" 
+              class="form-input" 
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-block">
+              로그인
+            </button>
+          </div>
+
+          <div class="auth-note">
+            <p>💡 학생 계정은 선생님이 생성합니다.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="auth-footer">
+      <p>&copy; 2024 Quiz Platform. All rights reserved.</p>
+    </div>
+  </div>
+
+  <!-- 회원가입 모달 -->
+  <div id="signup-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>선생님 회원가입</h2>
+        <button class="modal-close" data-modal="signup-modal">&times;</button>
+      </div>
+      <form id="signup-form" class="modal-body">
+        <div class="form-group">
+          <label for="signup-name">이름</label>
+          <input 
+            type="text" 
+            id="signup-name" 
+            class="form-input" 
+            placeholder="홍길동"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="signup-email">이메일</label>
+          <input 
+            type="email" 
+            id="signup-email" 
+            class="form-input" 
+            placeholder="email@example.com"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password">비밀번호</label>
+          <input 
+            type="password" 
+            id="signup-password" 
+            class="form-input" 
+            placeholder="8자 이상"
+            minlength="8"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password-confirm">비밀번호 확인</label>
+          <input 
+            type="password" 
+            id="signup-password-confirm" 
+            class="form-input" 
+            placeholder="비밀번호 재입력"
+            minlength="8"
+            required
+          />
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal="signup-modal">
+          취소
+        </button>
+        <button type="submit" form="signup-form" class="btn btn-primary">
+          가입하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 비밀번호 재설정 모달 -->
+  <div id="reset-password-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>비밀번호 재설정</h2>
+        <button class="modal-close" data-modal="reset-password-modal">&times;</button>
+      </div>
+      <form id="reset-password-form" class="modal-body">
+        <p>가입하신 이메일 주소를 입력하시면, 비밀번호 재설정 링크를 보내드립니다.</p>
+        
+        <div class="form-group">
+          <label for="reset-email">이메일</label>
+          <input 
+            type="email" 
+            id="reset-email" 
+            class="form-input" 
+            placeholder="email@example.com"
+            required
+          />
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal="reset-password-modal">
+          취소
+        </button>
+        <button type="submit" form="reset-password-form" class="btn btn-primary">
+          재설정 링크 보내기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 컨테이너 -->
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  
+  <script>
+    // 탭 전환
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        
+        // 활성 탭 변경
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        btn.classList.add('active');
+        document.getElementById(`${tab}-tab`).classList.add('active');
+      });
+    });
+
+    // 선생님 로그인
+    document.getElementById('teacher-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('teacher-email').value;
+      const password = document.getElementById('teacher-password').value;
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      
+      try {
+        Utils.toggleLoading(submitBtn, true);
+        
+        await Auth.signInWithEmail(email, password);
+        
+        // 대시보드로 이동
+        window.location.href = '/teacher/dashboard.html';
+      } catch (error) {
+        console.error('Login error:', error);
+      } finally {
+        Utils.toggleLoading(submitBtn, false);
+      }
+    });
+
+    // 학생 로그인
+    document.getElementById('student-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('student-username').value;
+      const password = document.getElementById('student-password').value;
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      
+      try {
+        Utils.toggleLoading(submitBtn, true);
+        
+        await Auth.signInStudent(username, password);
+        
+        // 대시보드로 이동
+        window.location.href = '/student/dashboard.html';
+      } catch (error) {
+        console.error('Login error:', error);
+      } finally {
+        Utils.toggleLoading(submitBtn, false);
+      }
+    });
+
+    // 회원가입 모달 열기
+    document.getElementById('signup-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      Utils.modal.show('signup-modal');
+    });
+
+    // 회원가입
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const passwordConfirm = document.getElementById('signup-password-confirm').value;
+      
+      if (password !== passwordConfirm) {
+        Utils.showToast('비밀번호가 일치하지 않습니다.', 'error');
+        return;
+      }
+      
+      const submitBtn = document.querySelector('#signup-form button[type="submit"]');
+      
+      try {
+        Utils.toggleLoading(submitBtn, true);
+        
+        await Auth.signUpWithEmail(email, password, name);
+        
+        Utils.modal.hide('signup-modal');
+        Utils.showToast('회원가입이 완료되었습니다! 로그인해주세요.', 'success');
+        
+        // 폼 초기화
+        e.target.reset();
+      } catch (error) {
+        console.error('Signup error:', error);
+      } finally {
+        Utils.toggleLoading(submitBtn, false);
+      }
+    });
+
+    // 비밀번호 재설정 모달 열기
+    document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      Utils.modal.show('reset-password-modal');
+    });
+
+    // 비밀번호 재설정
+    document.getElementById('reset-password-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('reset-email').value;
+      const submitBtn = document.querySelector('#reset-password-form button[type="submit"]');
+      
+      try {
+        Utils.toggleLoading(submitBtn, true);
+        
+        await Auth.resetPassword(email);
+        
+        Utils.modal.hide('reset-password-modal');
+        
+        // 폼 초기화
+        e.target.reset();
+      } catch (error) {
+        console.error('Password reset error:', error);
+      } finally {
+        Utils.toggleLoading(submitBtn, false);
+      }
+    });
+
+    // 모달 닫기 버튼
+    document.querySelectorAll('.modal-close, .btn-secondary[data-modal]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const modalId = e.target.dataset.modal || e.target.closest('.modal-close').parentElement.parentElement.parentElement.id;
+        Utils.modal.hide(modalId);
+      });
+    });
+
+    // 모달 외부 클릭 시 닫기
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          Utils.modal.hide(modal.id);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
