@@ -307,7 +307,10 @@
       });
 
       // 첫 번째 이모지 기본 선택
-      document.querySelector('.emoji-option').classList.add('selected');
+      const firstEmoji = document.querySelector('.emoji-option');
+      if (firstEmoji) {
+        firstEmoji.classList.add('selected');
+      }
     });
   </script>
 </body>
