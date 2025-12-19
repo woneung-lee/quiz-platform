@@ -71,37 +71,31 @@
         </div>
 
         <div class="form-group">
-          <label for="subject-icon" class="form-label">아이콘</label>
-          <div class="form-input-group">
-            <input 
-              type="text" 
-              id="subject-icon" 
-              class="form-input" 
-              placeholder="이모지 입력"
-              maxlength="2"
-            />
-            <div class="form-input-addon" style="font-size: 1.5rem;" id="icon-preview">📚</div>
+          <label class="form-label">아이콘 선택 *</label>
+          <div class="emoji-grid">
+            <button type="button" class="emoji-option" data-emoji="📚" data-color="#3B82F6">📚</button>
+            <button type="button" class="emoji-option" data-emoji="🔢" data-color="#F59E0B">🔢</button>
+            <button type="button" class="emoji-option" data-emoji="🔬" data-color="#10B981">🔬</button>
+            <button type="button" class="emoji-option" data-emoji="🌍" data-color="#14B8A6">🌍</button>
+            <button type="button" class="emoji-option" data-emoji="🎨" data-color="#EC4899">🎨</button>
+            <button type="button" class="emoji-option" data-emoji="🎵" data-color="#8B5CF6">🎵</button>
+            <button type="button" class="emoji-option" data-emoji="⚽" data-color="#EF4444">⚽</button>
+            <button type="button" class="emoji-option" data-emoji="💻" data-color="#6366F1">💻</button>
+            <button type="button" class="emoji-option" data-emoji="🇬🇧" data-color="#EF4444">🇬🇧</button>
+            <button type="button" class="emoji-option" data-emoji="📖" data-color="#F97316">📖</button>
+            <button type="button" class="emoji-option" data-emoji="✍️" data-color="#64748B">✍️</button>
+            <button type="button" class="emoji-option" data-emoji="🧮" data-color="#F59E0B">🧮</button>
+            <button type="button" class="emoji-option" data-emoji="🌱" data-color="#84CC16">🌱</button>
+            <button type="button" class="emoji-option" data-emoji="🎭" data-color="#EC4899">🎭</button>
+            <button type="button" class="emoji-option" data-emoji="🏃" data-color="#EF4444">🏃</button>
+            <button type="button" class="emoji-option" data-emoji="📝" data-color="#06B6D4">📝</button>
+            <button type="button" class="emoji-option" data-emoji="🗣️" data-color="#F97316">🗣️</button>
+            <button type="button" class="emoji-option" data-emoji="👂" data-color="#14B8A6">👂</button>
+            <button type="button" class="emoji-option" data-emoji="🤔" data-color="#8B5CF6">🤔</button>
+            <button type="button" class="emoji-option" data-emoji="🌟" data-color="#F59E0B">🌟</button>
           </div>
-          <p class="form-help">이모지를 입력하세요 (예: 📚, 🔢, 🔬)</p>
-        </div>
-
-        <div class="form-group">
-          <label for="subject-color" class="form-label">색상</label>
-          <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem;">
-            <button type="button" class="color-option" data-color="#3B82F6" style="background-color: #3B82F6;"></button>
-            <button type="button" class="color-option" data-color="#10B981" style="background-color: #10B981;"></button>
-            <button type="button" class="color-option" data-color="#F59E0B" style="background-color: #F59E0B;"></button>
-            <button type="button" class="color-option" data-color="#EF4444" style="background-color: #EF4444;"></button>
-            <button type="button" class="color-option" data-color="#8B5CF6" style="background-color: #8B5CF6;"></button>
-            <button type="button" class="color-option" data-color="#EC4899" style="background-color: #EC4899;"></button>
-            <button type="button" class="color-option" data-color="#14B8A6" style="background-color: #14B8A6;"></button>
-            <button type="button" class="color-option" data-color="#F97316" style="background-color: #F97316;"></button>
-            <button type="button" class="color-option" data-color="#6366F1" style="background-color: #6366F1;"></button>
-            <button type="button" class="color-option" data-color="#84CC16" style="background-color: #84CC16;"></button>
-            <button type="button" class="color-option" data-color="#06B6D4" style="background-color: #06B6D4;"></button>
-            <button type="button" class="color-option" data-color="#64748B" style="background-color: #64748B;"></button>
-          </div>
-          <input type="hidden" id="subject-color" value="#4F46E5">
+          <input type="hidden" id="subject-icon" value="📚" required>
+          <input type="hidden" id="subject-color" value="#3B82F6">
         </div>
       </form>
       <div class="modal-footer">
@@ -141,21 +135,34 @@
   </div>
 
   <style>
-    .color-option {
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+    }
+
+    .emoji-option {
       width: 100%;
       aspect-ratio: 1;
       border: 3px solid transparent;
       border-radius: var(--border-radius);
       cursor: pointer;
       transition: var(--transition);
+      font-size: 2rem;
+      background-color: var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .color-option:hover {
+    .emoji-option:hover {
       transform: scale(1.1);
+      background-color: var(--gray-200);
     }
 
-    .color-option.selected {
-      border-color: var(--gray-900);
+    .emoji-option.selected {
+      border-color: var(--primary-color);
+      background-color: var(--primary-color-light);
       box-shadow: 0 0 0 2px var(--bg-primary);
     }
 
@@ -283,6 +290,24 @@
           }
         });
       });
+
+      // 이모지 선택
+      document.querySelectorAll('.emoji-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          // 모든 이모지 선택 해제
+          document.querySelectorAll('.emoji-option').forEach(b => b.classList.remove('selected'));
+          
+          // 선택한 이모지 활성화
+          btn.classList.add('selected');
+          
+          // hidden input에 값 설정
+          document.getElementById('subject-icon').value = btn.dataset.emoji;
+          document.getElementById('subject-color').value = btn.dataset.color;
+        });
+      });
+
+      // 첫 번째 이모지 기본 선택
+      document.querySelector('.emoji-option').classList.add('selected');
     });
   </script>
 </body>
