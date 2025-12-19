@@ -199,7 +199,11 @@
             </div>
             <div class="card-body">
               <div class="alert alert-info mb-lg">
-                <strong>안내:</strong> 생성된 문제를 확인하세요. 문제에 만족하시면 아래에서 퀴즈 상태를 선택하고 저장하세요.
+                <strong>💡 수정 방법:</strong><br>
+                • 문제, 선택지, 해설을 <strong>클릭</strong>하면 수정할 수 있습니다<br>
+                • ✏️ 버튼을 누르면 전체 수정 모달이 열립니다<br>
+                • "정답 설정" 버튼을 눌러 정답을 변경할 수 있습니다<br>
+                • 수정이 완료되면 아래에서 퀴즈 상태를 선택하고 저장하세요
               </div>
 
               <!-- 문제 목록 -->
@@ -243,6 +247,171 @@
     .step.completed {
       opacity: 1;
       color: var(--success-color);
+    }
+
+    /* 문제 미리보기 스타일 */
+    .question-preview-card {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .question-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    .question-number {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--primary-color);
+      background: var(--primary-color-light);
+      padding: var(--spacing-xs) var(--spacing-md);
+      border-radius: var(--border-radius);
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: var(--spacing-xs);
+      transition: var(--transition);
+    }
+
+    .btn-icon:hover {
+      transform: scale(1.2);
+    }
+
+    .question-content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .question-text {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: var(--spacing-md);
+      background: var(--gray-50);
+      border-radius: var(--border-radius);
+    }
+
+    .editable {
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .editable:hover {
+      background: var(--gray-100);
+    }
+
+    .edit-textarea,
+    .edit-input {
+      width: 100%;
+      padding: var(--spacing-sm);
+      border: 2px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      font-size: inherit;
+      resize: vertical;
+    }
+
+    .edit-textarea:focus,
+    .edit-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px var(--primary-color-light);
+    }
+
+    .choices-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .choice-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md);
+      background: var(--gray-50);
+      border: 2px solid transparent;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+
+    .choice-item:hover {
+      border-color: var(--gray-300);
+    }
+
+    .choice-item.correct {
+      background: var(--success-color-light);
+      border-color: var(--success-color);
+    }
+
+    .choice-label {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--primary-color);
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .choice-item.correct .choice-label {
+      color: var(--success-color);
+    }
+
+    .choice-text {
+      flex: 1;
+      color: var(--text-primary);
+    }
+
+    .choice-check-btn {
+      background: transparent;
+      border: 1px solid var(--gray-300);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--border-radius);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .choice-check-btn:hover {
+      background: var(--gray-100);
+    }
+
+    .choice-check-btn.active {
+      background: var(--success-color);
+      color: white;
+      border-color: var(--success-color);
+    }
+
+    .explanation-section {
+      padding: var(--spacing-md);
+      background: var(--gray-50);
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .explanation-label {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .explanation-text {
+      color: var(--text-secondary);
+      line-height: 1.6;
     }
   </style>
 
