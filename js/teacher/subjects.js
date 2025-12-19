@@ -25,24 +25,6 @@ const SubjectsManager = {
       this.openSubjectModal();
     });
     
-    // 아이콘 입력 실시간 미리보기
-    document.getElementById('subject-icon').addEventListener('input', (e) => {
-      const icon = e.target.value || '📚';
-      document.getElementById('icon-preview').textContent = icon;
-    });
-    
-    // 색상 선택
-    document.querySelectorAll('.color-option').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.color-option').forEach(b => b.classList.remove('selected'));
-        e.target.classList.add('selected');
-        document.getElementById('subject-color').value = e.target.dataset.color;
-      });
-    });
-    
-    // 기본 색상 선택
-    document.querySelector('.color-option[data-color="#3B82F6"]').classList.add('selected');
-    
     // 과목 폼 제출
     document.getElementById('subject-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -172,29 +154,33 @@ const SubjectsManager = {
       // 수정 모드
       const subject = this.subjects.find(s => s.id === subjectId);
       if (subject) {
-        document.getElementById('subject-modal-title').textContent = '과목 수정';
+        const titleEl = document.getElementById('subject-modal-title');
+        if (titleEl) titleEl.textContent = '과목 수정';
+        
         document.getElementById('subject-id').value = subject.id;
         document.getElementById('subject-name').value = subject.name;
         document.getElementById('subject-icon').value = subject.icon || '📚';
-        document.getElementById('icon-preview').textContent = subject.icon || '📚';
-        document.getElementById('subject-color').value = subject.color || '#4F46E5';
+        document.getElementById('subject-color').value = subject.color || '#3B82F6';
         
-        // 색상 버튼 선택
-        document.querySelectorAll('.color-option').forEach(btn => {
-          btn.classList.toggle('selected', btn.dataset.color === subject.color);
+        // 이모지 버튼 선택
+        document.querySelectorAll('.emoji-option').forEach(btn => {
+          btn.classList.toggle('selected', btn.dataset.emoji === subject.icon);
         });
       }
     } else {
       // 추가 모드
-      document.getElementById('subject-modal-title').textContent = '새 과목 추가';
+      const titleEl = document.getElementById('subject-modal-title');
+      if (titleEl) titleEl.textContent = '새 과목 추가';
+      
       document.getElementById('subject-form').reset();
       document.getElementById('subject-id').value = '';
-      document.getElementById('icon-preview').textContent = '📚';
-      document.getElementById('subject-color').value = '#4F46E5';
+      document.getElementById('subject-icon').value = '📚';
+      document.getElementById('subject-color').value = '#3B82F6';
       
-      // 첫 번째 색상 선택
-      document.querySelectorAll('.color-option').forEach(btn => btn.classList.remove('selected'));
-      document.querySelector('.color-option[data-color="#3B82F6"]').classList.add('selected');
+      // 첫 번째 이모지 선택
+      document.querySelectorAll('.emoji-option').forEach(btn => btn.classList.remove('selected'));
+      const firstEmoji = document.querySelector('.emoji-option');
+      if (firstEmoji) firstEmoji.classList.add('selected');
     }
     
     Utils.modal.show('subject-modal');
