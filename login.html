@@ -6,116 +6,109 @@
   <title>로그인 - Quiz Platform</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/auth.css">
 </head>
 <body class="auth-page">
   <div class="auth-container">
-    <div class="auth-card">
-      <div class="auth-header">
-        <h1 class="logo">📚 Quiz Platform</h1>
-        <p class="subtitle">AI 기반 실시간 퀴즈 학습 플랫폼</p>
-      </div>
+    <div class="auth-box">
+      <div class="auth-logo">📚</div>
+      <h1>Quiz Platform</h1>
+      <p class="auth-subtitle">AI 기반 실시간 퀴즈 학습 플랫폼</p>
 
-      <!-- 탭 선택 -->
+      <!-- 탭 -->
       <div class="auth-tabs">
-        <button class="tab-btn active" data-tab="teacher">
-          👨‍🏫 선생님 로그인
-        </button>
-        <button class="tab-btn" data-tab="student">
-          👨‍🎓 학생 로그인
-        </button>
+        <button class="auth-tab active" data-tab="teacher">선생님</button>
+        <button class="auth-tab" data-tab="student">학생</button>
       </div>
 
-      <!-- 선생님 로그인 폼 -->
+      <!-- 선생님 로그인 -->
       <div id="teacher-tab" class="tab-content active">
         <form id="teacher-login-form" class="auth-form">
           <div class="form-group">
-            <label for="teacher-email">이메일</label>
+            <label for="teacher-username" class="form-label">아이디</label>
             <input 
-              type="email" 
-              id="teacher-email" 
+              type="text" 
+              id="teacher-username" 
               class="form-input" 
-              placeholder="email@example.com"
+              placeholder="아이디를 입력하세요"
               required
+              pattern="[a-z0-9_-]{5,20}"
             />
+            <p class="form-help">5~20자의 영문 소문자, 숫자, -, _ 만 사용 가능</p>
           </div>
 
           <div class="form-group">
-            <label for="teacher-password">비밀번호</label>
+            <label for="teacher-password" class="form-label">비밀번호</label>
             <input 
               type="password" 
               id="teacher-password" 
               class="form-input" 
-              placeholder="••••••••"
+              placeholder="비밀번호를 입력하세요"
               required
+              minlength="8"
+              maxlength="16"
             />
+            <p class="form-help">8~16자 영문 대/소문자, 숫자, 특수문자</p>
           </div>
 
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary btn-block">
-              로그인
-            </button>
-          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            로그인
+          </button>
 
           <div class="auth-links">
-            <a href="#" id="forgot-password-link">비밀번호를 잊으셨나요?</a>
             <a href="#" id="signup-link">회원가입</a>
           </div>
         </form>
       </div>
 
-      <!-- 학생 로그인 폼 -->
+      <!-- 학생 로그인 -->
       <div id="student-tab" class="tab-content">
         <form id="student-login-form" class="auth-form">
           <div class="form-group">
-            <label for="student-username">학생 아이디</label>
-            <input 
-              type="text" 
-              id="student-username" 
-              class="form-input" 
-              placeholder="student123"
+            <label for="student-name-select" class="form-label">이름 선택</label>
+            <select 
+              id="student-name-select" 
+              class="form-select"
               required
-            />
+            >
+              <option value="">이름을 선택하세요</option>
+            </select>
+            <p class="form-help">자신의 이름을 선택하세요</p>
           </div>
 
           <div class="form-group">
-            <label for="student-password">비밀번호</label>
+            <label for="student-password" class="form-label">비밀번호</label>
             <input 
               type="password" 
               id="student-password" 
               class="form-input" 
-              placeholder="••••••••"
+              placeholder="선생님이 알려준 비밀번호"
               required
             />
           </div>
 
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary btn-block">
-              로그인
-            </button>
-          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            로그인
+          </button>
 
           <div class="auth-note">
-            <p>💡 학생 계정은 선생님이 생성합니다.</p>
+            💡 선생님께 이름과 비밀번호를 확인하세요
           </div>
         </form>
       </div>
-    </div>
-
-    <div class="auth-footer">
-      <p>&copy; 2024 Quiz Platform. All rights reserved.</p>
     </div>
   </div>
 
   <!-- 회원가입 모달 -->
   <div id="signup-modal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 500px;">
       <div class="modal-header">
         <h2>선생님 회원가입</h2>
         <button class="modal-close" data-modal="signup-modal">&times;</button>
       </div>
       <form id="signup-form" class="modal-body">
         <div class="form-group">
-          <label for="signup-name">이름</label>
+          <label for="signup-name" class="form-label">이름 *</label>
           <input 
             type="text" 
             id="signup-name" 
@@ -126,37 +119,43 @@
         </div>
 
         <div class="form-group">
-          <label for="signup-email">이메일</label>
+          <label for="signup-username" class="form-label">아이디 *</label>
           <input 
-            type="email" 
-            id="signup-email" 
+            type="text" 
+            id="signup-username" 
             class="form-input" 
-            placeholder="email@example.com"
+            placeholder="아이디를 입력하세요"
             required
+            pattern="[a-z0-9_-]{5,20}"
           />
+          <p class="form-help">5~20자의 영문 소문자, 숫자, -, _ 만 사용 가능</p>
         </div>
 
         <div class="form-group">
-          <label for="signup-password">비밀번호</label>
+          <label for="signup-password" class="form-label">비밀번호 *</label>
           <input 
             type="password" 
             id="signup-password" 
             class="form-input" 
-            placeholder="8자 이상"
-            minlength="8"
+            placeholder="비밀번호를 입력하세요"
             required
+            minlength="8"
+            maxlength="16"
           />
+          <p class="form-help">8~16자 영문 대/소문자, 숫자, 특수문자 사용</p>
+          <p class="form-help">사용 가능한 특수문자: ! " # $ % & ' ( ) * + , - . / : ; ? @ [ \ ] ^ _ ` { | } ~</p>
         </div>
 
         <div class="form-group">
-          <label for="signup-password-confirm">비밀번호 확인</label>
+          <label for="signup-password-confirm" class="form-label">비밀번호 확인 *</label>
           <input 
             type="password" 
             id="signup-password-confirm" 
             class="form-input" 
-            placeholder="비밀번호 재입력"
-            minlength="8"
+            placeholder="비밀번호를 다시 입력하세요"
             required
+            minlength="8"
+            maxlength="16"
           />
         </div>
       </form>
@@ -171,41 +170,6 @@
     </div>
   </div>
 
-  <!-- 비밀번호 재설정 모달 -->
-  <div id="reset-password-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>비밀번호 재설정</h2>
-        <button class="modal-close" data-modal="reset-password-modal">&times;</button>
-      </div>
-      <form id="reset-password-form" class="modal-body">
-        <p>가입하신 이메일 주소를 입력하시면, 비밀번호 재설정 링크를 보내드립니다.</p>
-        
-        <div class="form-group">
-          <label for="reset-email">이메일</label>
-          <input 
-            type="email" 
-            id="reset-email" 
-            class="form-input" 
-            placeholder="email@example.com"
-            required
-          />
-        </div>
-      </form>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-modal="reset-password-modal">
-          취소
-        </button>
-        <button type="submit" form="reset-password-form" class="btn btn-primary">
-          재설정 링크 보내기
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 토스트 컨테이너 -->
-  <div id="toast-container"></div>
-
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/config.js"></script>
@@ -214,17 +178,53 @@
   <script src="/js/auth.js"></script>
   
   <script>
+    // 페이지 로드 시 학생 목록 불러오기
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadStudentNames();
+    });
+
+    // 학생 이름 목록 로드
+    async function loadStudentNames() {
+      try {
+        const { data: students, error } = await supabase
+          .from('users')
+          .select('id, name, student_number')
+          .eq('role', 'student')
+          .order('name');
+
+        if (error) throw error;
+
+        const select = document.getElementById('student-name-select');
+        select.innerHTML = '<option value="">이름을 선택하세요</option>';
+
+        students.forEach(student => {
+          const option = document.createElement('option');
+          option.value = student.id;
+          option.textContent = student.student_number 
+            ? `${student.student_number}. ${student.name}` 
+            : student.name;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Student names loading error:', error);
+      }
+    }
+
     // 탭 전환
-    document.querySelectorAll('.tab-btn').forEach(btn => {
+    document.querySelectorAll('.auth-tab').forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
         
-        // 활성 탭 변경
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         
         btn.classList.add('active');
         document.getElementById(`${tab}-tab`).classList.add('active');
+
+        // 학생 탭으로 전환 시 이름 목록 새로고침
+        if (tab === 'student') {
+          loadStudentNames();
+        }
       });
     });
 
@@ -232,16 +232,26 @@
     document.getElementById('teacher-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const email = document.getElementById('teacher-email').value;
+      const username = document.getElementById('teacher-username').value.trim();
       const password = document.getElementById('teacher-password').value;
       const submitBtn = e.target.querySelector('button[type="submit"]');
+      
+      // 유효성 검사
+      if (!validateUsername(username)) {
+        Utils.showToast('아이디는 5~20자의 영문 소문자, 숫자, -, _ 만 사용 가능합니다.', 'error');
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        Utils.showToast('비밀번호는 8~16자 영문 대/소문자, 숫자, 특수문자를 사용해야 합니다.', 'error');
+        return;
+      }
       
       try {
         Utils.toggleLoading(submitBtn, true);
         
-        await Auth.signInWithEmail(email, password);
+        await Auth.signInWithUsername(username, password, 'teacher');
         
-        // 대시보드로 이동
         window.location.href = '/teacher/dashboard.html';
       } catch (error) {
         console.error('Login error:', error);
@@ -254,16 +264,20 @@
     document.getElementById('student-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const username = document.getElementById('student-username').value;
+      const studentId = document.getElementById('student-name-select').value;
       const password = document.getElementById('student-password').value;
       const submitBtn = e.target.querySelector('button[type="submit"]');
+      
+      if (!studentId) {
+        Utils.showToast('이름을 선택해주세요.', 'warning');
+        return;
+      }
       
       try {
         Utils.toggleLoading(submitBtn, true);
         
-        await Auth.signInStudent(username, password);
+        await Auth.signInStudent(studentId, password);
         
-        // 대시보드로 이동
         window.location.href = '/student/dashboard.html';
       } catch (error) {
         console.error('Login error:', error);
@@ -272,7 +286,7 @@
       }
     });
 
-    // 회원가입 모달 열기
+    // 회원가입 모달
     document.getElementById('signup-link').addEventListener('click', (e) => {
       e.preventDefault();
       Utils.modal.show('signup-modal');
@@ -282,27 +296,37 @@
     document.getElementById('signup-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const name = document.getElementById('signup-name').value;
-      const email = document.getElementById('signup-email').value;
+      const name = document.getElementById('signup-name').value.trim();
+      const username = document.getElementById('signup-username').value.trim();
       const password = document.getElementById('signup-password').value;
       const passwordConfirm = document.getElementById('signup-password-confirm').value;
       
+      // 유효성 검사
+      if (!validateUsername(username)) {
+        Utils.showToast('아이디는 5~20자의 영문 소문자, 숫자, -, _ 만 사용 가능합니다.', 'error');
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        Utils.showToast('비밀번호는 8~16자 영문 대/소문자, 숫자, 특수문자를 사용해야 합니다.', 'error');
+        return;
+      }
+
       if (password !== passwordConfirm) {
         Utils.showToast('비밀번호가 일치하지 않습니다.', 'error');
         return;
       }
       
-      const submitBtn = document.querySelector('#signup-form button[type="submit"]');
+      const submitBtn = document.querySelector('#signup-modal .btn-primary');
       
       try {
         Utils.toggleLoading(submitBtn, true);
         
-        await Auth.signUpWithEmail(email, password, name);
+        await Auth.signUpWithUsername(username, password, name);
         
         Utils.modal.hide('signup-modal');
         Utils.showToast('회원가입이 완료되었습니다! 로그인해주세요.', 'success');
         
-        // 폼 초기화
         e.target.reset();
       } catch (error) {
         console.error('Signup error:', error);
@@ -311,44 +335,37 @@
       }
     });
 
-    // 비밀번호 재설정 모달 열기
-    document.getElementById('forgot-password-link').addEventListener('click', (e) => {
-      e.preventDefault();
-      Utils.modal.show('reset-password-modal');
-    });
+    // 아이디 유효성 검사
+    function validateUsername(username) {
+      const regex = /^[a-z0-9_-]{5,20}$/;
+      return regex.test(username);
+    }
 
-    // 비밀번호 재설정
-    document.getElementById('reset-password-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // 비밀번호 유효성 검사
+    function validatePassword(password) {
+      if (password.length < 8 || password.length > 16) return false;
       
-      const email = document.getElementById('reset-email').value;
-      const submitBtn = document.querySelector('#reset-password-form button[type="submit"]');
+      // 영문 대/소문자, 숫자, 특수문자 포함 확인
+      const hasUpper = /[A-Z]/.test(password);
+      const hasLower = /[a-z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+      const hasSpecial = /[!"#$%&'()*+,\-./:;?@\[\\\]^_`{|}~]/.test(password);
       
-      try {
-        Utils.toggleLoading(submitBtn, true);
-        
-        await Auth.resetPassword(email);
-        
-        Utils.modal.hide('reset-password-modal');
-        
-        // 폼 초기화
-        e.target.reset();
-      } catch (error) {
-        console.error('Password reset error:', error);
-      } finally {
-        Utils.toggleLoading(submitBtn, false);
-      }
-    });
+      // 허용되지 않은 문자 확인
+      const validChars = /^[A-Za-z0-9!"#$%&'()*+,\-./:;?@\[\\\]^_`{|}~]+$/;
+      if (!validChars.test(password)) return false;
+      
+      return (hasUpper || hasLower) && hasNumber && hasSpecial;
+    }
 
-    // 모달 닫기 버튼
+    // 모달 닫기
     document.querySelectorAll('.modal-close, .btn-secondary[data-modal]').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const modalId = e.target.dataset.modal || e.target.closest('.modal-close').parentElement.parentElement.parentElement.id;
+        const modalId = e.target.dataset.modal || e.target.closest('.modal-content').parentElement.id;
         Utils.modal.hide(modalId);
       });
     });
 
-    // 모달 외부 클릭 시 닫기
     document.querySelectorAll('.modal').forEach(modal => {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
