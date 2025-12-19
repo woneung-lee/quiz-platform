@@ -240,36 +240,227 @@ const QuizGenerator = {
     document.getElementById('quiz-question-count-display').textContent = 
       `총 ${this.generatedQuestions.length}개 문제`;
     
+    // 선택지 번호 매핑
+    const choiceLabels = ['①', '②', '③', '④', '⑤'];
+    
     let html = '';
     
     this.generatedQuestions.forEach((question, index) => {
       html += `
-        <div class="question-preview-card">
+        <div class="question-preview-card" data-question-index="${index}">
           <div class="question-preview-header">
             <span class="question-number">문제 ${index + 1}</span>
+            <button class="btn-icon" onclick="QuizGenerator.editQuestion(${index})" title="수정">
+              ✏️
+            </button>
           </div>
           
-          <div class="question-text">${Utils.escapeHtml(question.question)}</div>
-          
-          <div class="choices-list">
-            ${question.choices.map((choice, choiceIndex) => `
-              <div class="choice-item ${choiceIndex === question.correctAnswer ? 'correct' : ''}">
-                <span class="choice-label">④${choiceIndex + 1}</span>
-                <span class="choice-text">${Utils.escapeHtml(choice)}</span>
-                ${choiceIndex === question.correctAnswer ? '<span class="choice-check">✓ 정답</span>' : ''}
-              </div>
-            `).join('')}
-          </div>
-          
-          <div class="explanation-section">
-            <div class="explanation-label">해설</div>
-            <div class="explanation-text">${Utils.escapeHtml(question.explanation)}</div>
+          <div class="question-content">
+            <div class="question-text editable" data-field="question">${Utils.escapeHtml(question.question)}</div>
+            
+            <div class="choices-list">
+              ${question.choices.map((choice, choiceIndex) => `
+                <div class="choice-item ${choiceIndex === question.correctAnswer ? 'correct' : ''}" data-choice-index="${choiceIndex}">
+                  <span class="choice-label">${choiceLabels[choiceIndex] || `${choiceIndex + 1}`}</span>
+                  <span class="choice-text editable" data-field="choice">${Utils.escapeHtml(choice)}</span>
+                  <button class="choice-check-btn ${choiceIndex === question.correctAnswer ? 'active' : ''}" 
+                          onclick="QuizGenerator.setCorrectAnswer(${index}, ${choiceIndex})"
+                          title="정답으로 설정">
+                    ${choiceIndex === question.correctAnswer ? '✓ 정답' : '정답 설정'}
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+            
+            <div class="explanation-section">
+              <div class="explanation-label">해설</div>
+              <div class="explanation-text editable" data-field="explanation">${Utils.escapeHtml(question.explanation)}</div>
+            </div>
           </div>
         </div>
       `;
     });
     
     container.innerHTML = html;
+    
+    // 수정 가능한 요소에 클릭 이벤트 추가
+    this.setupEditableElements();
+  },
+  
+  // 수정 가능한 요소 설정
+  setupEditableElements() {
+    document.querySelectorAll('.editable').forEach(element => {
+      element.addEventListener('click', (e) => {
+        if (element.querySelector('textarea') || element.querySelector('input')) {
+          return; // 이미 편집 중
+        }
+        
+        const questionCard = element.closest('.question-preview-card');
+        const questionIndex = parseInt(questionCard.dataset.questionIndex);
+        const field = element.dataset.field;
+        const originalText = element.textContent;
+        
+        // 편집 UI 생성
+        let editElement;
+        if (field === 'question' || field === 'explanation') {
+          editElement = document.createElement('textarea');
+          editElement.className = 'edit-textarea';
+          editElement.value = originalText;
+          editElement.rows = field === 'question' ? 3 : 4;
+        } else {
+          editElement = document.createElement('input');
+          editElement.type = 'text';
+          editElement.className = 'edit-input';
+          editElement.value = originalText;
+        }
+        
+        element.innerHTML = '';
+        element.appendChild(editElement);
+        editElement.focus();
+        
+        // 저장 함수
+        const saveEdit = () => {
+          const newValue = editElement.value.trim();
+          
+          if (!newValue) {
+            Utils.showToast('내용을 입력해주세요.', 'warning');
+            editElement.focus();
+            return;
+          }
+          
+          // 데이터 업데이트
+          if (field === 'question') {
+            this.generatedQuestions[questionIndex].question = newValue;
+          } else if (field === 'explanation') {
+            this.generatedQuestions[questionIndex].explanation = newValue;
+          } else if (field === 'choice') {
+            const choiceIndex = parseInt(questionCard.querySelectorAll('.choice-item')[
+              Array.from(element.closest('.choice-item').parentElement.children).indexOf(element.closest('.choice-item'))
+            ].dataset.choiceIndex);
+            this.generatedQuestions[questionIndex].choices[choiceIndex] = newValue;
+          }
+          
+          // UI 업데이트
+          element.textContent = newValue;
+          Utils.showToast('저장되었습니다.', 'success');
+        };
+        
+        // Enter로 저장 (Shift+Enter는 줄바꿈)
+        editElement.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            saveEdit();
+          } else if (e.key === 'Escape') {
+            element.textContent = originalText;
+          }
+        });
+        
+        // 포커스 잃으면 저장
+        editElement.addEventListener('blur', saveEdit);
+      });
+    });
+  },
+  
+  // 문제 수정 모달 (더 큰 편집 필요시)
+  editQuestion(index) {
+    const question = this.generatedQuestions[index];
+    
+    const modal = `
+      <div class="modal active" id="edit-question-modal">
+        <div class="modal-content" style="max-width: 800px;">
+          <div class="modal-header">
+            <h2>문제 ${index + 1} 수정</h2>
+            <button class="modal-close" onclick="Utils.modal.hide('edit-question-modal')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">문제</label>
+              <textarea id="edit-question-text" class="form-input" rows="4">${Utils.escapeHtml(question.question)}</textarea>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">선택지</label>
+              ${question.choices.map((choice, choiceIndex) => `
+                <div class="mb-sm">
+                  <input type="text" class="form-input" id="edit-choice-${choiceIndex}" value="${Utils.escapeHtml(choice)}">
+                </div>
+              `).join('')}
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">정답</label>
+              <select id="edit-correct-answer" class="form-select">
+                ${question.choices.map((choice, choiceIndex) => `
+                  <option value="${choiceIndex}" ${choiceIndex === question.correctAnswer ? 'selected' : ''}>
+                    ${choiceIndex + 1}번: ${Utils.escapeHtml(choice.substring(0, 30))}${choice.length > 30 ? '...' : ''}
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">해설</label>
+              <textarea id="edit-explanation" class="form-input" rows="4">${Utils.escapeHtml(question.explanation)}</textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="Utils.modal.hide('edit-question-modal')">취소</button>
+            <button class="btn btn-primary" onclick="QuizGenerator.saveQuestionEdit(${index})">저장</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modal);
+  },
+  
+  // 문제 수정 저장
+  saveQuestionEdit(index) {
+    const questionText = document.getElementById('edit-question-text').value.trim();
+    const choices = [];
+    
+    for (let i = 0; i < this.generatedQuestions[index].choices.length; i++) {
+      const choiceValue = document.getElementById(`edit-choice-${i}`).value.trim();
+      if (!choiceValue) {
+        Utils.showToast(`${i + 1}번 선택지를 입력해주세요.`, 'warning');
+        return;
+      }
+      choices.push(choiceValue);
+    }
+    
+    const correctAnswer = parseInt(document.getElementById('edit-correct-answer').value);
+    const explanation = document.getElementById('edit-explanation').value.trim();
+    
+    if (!questionText) {
+      Utils.showToast('문제를 입력해주세요.', 'warning');
+      return;
+    }
+    
+    if (!explanation) {
+      Utils.showToast('해설을 입력해주세요.', 'warning');
+      return;
+    }
+    
+    // 데이터 업데이트
+    this.generatedQuestions[index] = {
+      question: questionText,
+      choices: choices,
+      correctAnswer: correctAnswer,
+      explanation: explanation
+    };
+    
+    // UI 업데이트
+    this.renderQuestionsPreview();
+    Utils.modal.hide('edit-question-modal');
+    document.getElementById('edit-question-modal').remove();
+    Utils.showToast('저장되었습니다.', 'success');
+  },
+  
+  // 정답 설정
+  setCorrectAnswer(questionIndex, choiceIndex) {
+    this.generatedQuestions[questionIndex].correctAnswer = choiceIndex;
+    this.renderQuestionsPreview();
+    Utils.showToast('정답이 변경되었습니다.', 'success');
   },
   
   // 퀴즈 저장
