@@ -1,4 +1,5 @@
 /* 인증 페이지 스타일 */
+
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -10,110 +11,185 @@
 
 .auth-container {
   width: 100%;
-  max-width: 480px;
+  max-width: 420px;
+  margin: 0 auto;
 }
 
-.auth-card {
+.auth-box {
   background-color: var(--bg-primary);
   border-radius: var(--border-radius-xl);
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   padding: var(--spacing-2xl);
-  margin-bottom: var(--spacing-lg);
-}
-
-.auth-header {
   text-align: center;
-  margin-bottom: var(--spacing-xl);
 }
 
-.auth-header .logo {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--primary-color);
+.auth-logo {
+  font-size: 4rem;
   margin-bottom: var(--spacing-md);
 }
 
-.auth-header .subtitle {
-  color: var(--text-secondary);
-  margin-bottom: 0;
+.auth-box h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-primary);
 }
 
+.auth-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* 탭 */
 .auth-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--spacing-xs);
   margin-bottom: var(--spacing-xl);
   background-color: var(--gray-100);
-  padding: var(--spacing-xs);
+  padding: 4px;
   border-radius: var(--border-radius);
 }
 
-.auth-tabs .tab-btn {
-  flex: 1;
-  padding: var(--spacing-md);
-  background: none;
+.auth-tab {
+  padding: var(--spacing-sm) var(--spacing-md);
   border: none;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.9375rem;
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-weight: 500;
-  color: var(--text-secondary);
   transition: var(--transition);
-  margin-bottom: 0;
-  border-bottom: none;
 }
 
-.auth-tabs .tab-btn:hover {
-  color: var(--primary-color);
+.auth-tab:hover {
+  background-color: var(--gray-200);
+  color: var(--text-primary);
 }
 
-.auth-tabs .tab-btn.active {
-  background-color: var(--bg-primary);
+.auth-tab.active {
+  background-color: white;
   color: var(--primary-color);
   box-shadow: var(--shadow-sm);
 }
 
+/* 폼 */
 .auth-form {
+  text-align: left;
+}
+
+.auth-form .form-group {
   margin-bottom: var(--spacing-lg);
 }
 
-.auth-links {
-  display: flex;
-  justify-content: space-between;
-  margin-top: var(--spacing-lg);
-  font-size: 0.875rem;
+.auth-form .form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-primary);
+  font-size: 0.9375rem;
 }
 
+.auth-form .form-input,
+.auth-form .form-select {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.auth-form .form-input:focus,
+.auth-form .form-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.auth-form .form-help {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+  line-height: 1.4;
+}
+
+.auth-form .btn-block {
+  width: 100%;
+  margin-top: var(--spacing-md);
+}
+
+.auth-form .btn-lg {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+/* 링크 */
+.auth-links {
+  text-align: center;
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.auth-links a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
+
+/* 노트 */
 .auth-note {
   margin-top: var(--spacing-lg);
   padding: var(--spacing-md);
-  background-color: var(--info-color);
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: var(--gray-50);
   border-radius: var(--border-radius);
-  text-align: center;
-  color: var(--info-color);
-}
-
-.auth-note p {
-  margin-bottom: 0;
-}
-
-.auth-footer {
-  text-align: center;
-  color: white;
-  opacity: 0.8;
-}
-
-.auth-footer p {
-  margin-bottom: 0;
   font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* 탭 콘텐츠 */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
 }
 
 /* 반응형 */
 @media (max-width: 480px) {
-  .auth-card {
-    padding: var(--spacing-lg);
+  .auth-page {
+    padding: var(--spacing-md);
   }
-  
-  .auth-header .logo {
+
+  .auth-box {
+    padding: var(--spacing-xl);
+  }
+
+  .auth-logo {
+    font-size: 3rem;
+  }
+
+  .auth-box h1 {
     font-size: 1.5rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .auth-tab {
+    font-size: 0.875rem;
+    padding: var(--spacing-sm);
   }
 }
