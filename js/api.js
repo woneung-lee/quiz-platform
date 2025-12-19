@@ -27,18 +27,31 @@ const OpenAIClient = {
         throw new Error(`선택지 개수는 ${window.CONFIG.MIN_CHOICE_COUNT}~${window.CONFIG.MAX_CHOICE_COUNT}개 사이여야 합니다.`);
       }
       
-      // Supabase Edge Function 호출
-      const { data, error } = await SupabaseClient.getInstance().functions.invoke('generate-quiz', {
-        body: {
+      // Vercel Serverless Function 호출
+      const apiUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3000/api/generate-quiz'  // 로컬 개발
+        : '/api/generate-quiz';  // 프로덕션
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           prompt,
           fileContent,
           fileType,
           questionCount,
           choiceCount
-        }
+        })
       });
       
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '문제 생성 중 오류가 발생했습니다.');
+      }
+      
+      const data = await response.json();
       
       // 응답 검증
       if (!data || !data.questions || !Array.isArray(data.questions)) {
