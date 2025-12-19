@@ -32,7 +32,7 @@
               class="form-input" 
               placeholder="아이디를 입력하세요"
               required
-              pattern="[a-z0-9_-]{5,20}"
+              pattern="[a-z0-9_\-]{5,20}"
             />
             <p class="form-help">5~20자의 영문 소문자, 숫자, -, _ 만 사용 가능</p>
           </div>
@@ -126,7 +126,7 @@
             class="form-input" 
             placeholder="아이디를 입력하세요"
             required
-            pattern="[a-z0-9_-]{5,20}"
+            pattern="[a-z0-9_\-]{5,20}"
           />
           <p class="form-help">5~20자의 영문 소문자, 숫자, -, _ 만 사용 가능</p>
         </div>
@@ -186,7 +186,7 @@
     // 학생 이름 목록 로드
     async function loadStudentNames() {
       try {
-        const { data: students, error } = await supabase
+        const { data: students, error } = await SupabaseClient.getInstance()
           .from('users')
           .select('id, name, student_number')
           .eq('role', 'student')
@@ -337,7 +337,7 @@
 
     // 아이디 유효성 검사
     function validateUsername(username) {
-      const regex = /^[a-z0-9_-]{5,20}$/;
+      const regex = /^[a-z0-9_\-]{5,20}$/;
       return regex.test(username);
     }
 
