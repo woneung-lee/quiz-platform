@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학습 대시보드 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/student/dashboard.html" class="active">대시보드</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+          <button class="btn btn-sm btn-secondary" id="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container">
+        <div class="mb-lg">
+          <h1>안녕하세요, <span id="student-name-display">학생</span>님! 👋</h1>
+          <p class="text-muted">오늘도 열심히 공부해봐요!</p>
+        </div>
+
+        <!-- 학습 통계 -->
+        <div class="grid grid-cols-3 mb-lg">
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+              <div style="font-size: 1.5rem; font-weight: 700;" id="stat-completed">0</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">완료한 퀴즈</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);" id="stat-average">0%</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">평균 점수</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning-color);" id="stat-available">0</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">진행 가능한 퀴즈</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 과목 목록 -->
+        <div class="mb-md">
+          <h2>과목</h2>
+          <p class="text-muted">과목을 선택하여 퀴즈를 풀어보세요</p>
+        </div>
+
+        <div id="subjects-grid" class="grid grid-cols-3">
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <style>
+    .subject-card {
+      background: linear-gradient(135deg, var(--subject-color) 0%, var(--subject-color-dark) 100%);
+      color: white;
+      padding: var(--spacing-xl);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+    }
+
+    .subject-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .subject-card-icon {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .subject-card-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .subject-card-stats {
+      display: flex;
+      gap: var(--spacing-md);
+      font-size: 0.875rem;
+      opacity: 0.9;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .subject-card-badge {
+      position: absolute;
+      top: var(--spacing-md);
+      right: var(--spacing-md);
+      background-color: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: var(--spacing-xs) var(--spacing-md);
+      border-radius: var(--border-radius-full);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/student/dashboard.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('student')) {
+        return;
+      }
+
+      // 학생 대시보드 초기화
+      if (window.StudentDashboard) {
+        await StudentDashboard.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+      document.getElementById('student-name-display').textContent = user.name;
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        Auth.signOut();
+      });
+    });
+  </script>
+</body>
+</html>

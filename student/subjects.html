@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>퀴즈 목록 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/student/dashboard.html">대시보드</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+          <button class="btn btn-sm btn-secondary" id="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container">
+        <!-- 상단 헤더 -->
+        <div class="mb-lg">
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+            <a href="/student/dashboard.html" class="btn btn-sm btn-outline">← 대시보드</a>
+            <div style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" id="subject-icon-display"></div>
+          </div>
+          <h1 id="subject-name-display">로딩중...</h1>
+          <p class="text-muted">퀴즈를 선택하여 학습을 시작하세요</p>
+        </div>
+
+        <!-- 탭 -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="available">풀기 (<span id="available-count">0</span>)</button>
+          <button class="tab-btn" data-tab="review">복습하기 (<span id="review-count">0</span>)</button>
+        </div>
+
+        <!-- 진행 가능한 퀴즈 -->
+        <div id="available-tab" class="tab-content active">
+          <div id="available-quizzes-container">
+            <div style="text-align: center; padding: 3rem;">
+              <div class="spinner"></div>
+              <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 복습 가능한 퀴즈 -->
+        <div id="review-tab" class="tab-content">
+          <div id="review-quizzes-container">
+            <div style="text-align: center; padding: 3rem;">
+              <div class="spinner"></div>
+              <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <style>
+    .quiz-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .quiz-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-color);
+    }
+
+    .quiz-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .quiz-card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .quiz-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .quiz-card-status {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      background-color: var(--gray-50);
+      border-radius: var(--border-radius);
+      margin-top: var(--spacing-md);
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/student/subjects.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('student')) {
+        return;
+      }
+
+      // 과목별 퀴즈 목록 초기화
+      if (window.StudentSubjects) {
+        await StudentSubjects.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        Auth.signOut();
+      });
+
+      // 탭 전환
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          btn.classList.add('active');
+          document.getElementById(`${tab}-tab`).classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

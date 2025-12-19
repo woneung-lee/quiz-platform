@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>복습하기 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/file-upload.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/student/dashboard.html">대시보드</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container" style="max-width: 800px;">
+        <!-- 복습 헤더 -->
+        <div class="card mb-lg">
+          <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                  <span class="badge badge-info">복습 모드</span>
+                </div>
+                <h2 id="quiz-title-display">로딩중...</h2>
+                <p style="margin: 0; color: var(--text-secondary);">
+                  내 점수: <strong id="my-score">0/0</strong> (<span id="my-percentage">0%</span>)
+                </p>
+              </div>
+              <button class="btn btn-outline" id="back-btn">← 대시보드로</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 필터 -->
+        <div class="tabs mb-md">
+          <button class="tab-btn active" data-tab="all">전체 문제</button>
+          <button class="tab-btn" data-tab="correct">맞은 문제</button>
+          <button class="tab-btn" data-tab="wrong">틀린 문제</button>
+        </div>
+
+        <!-- 문제 목록 -->
+        <div id="all-tab" class="tab-content active">
+          <div id="all-questions-container">
+            <div style="text-align: center; padding: 3rem;">
+              <div class="spinner"></div>
+              <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="correct-tab" class="tab-content">
+          <div id="correct-questions-container"></div>
+        </div>
+
+        <div id="wrong-tab" class="tab-content">
+          <div id="wrong-questions-container"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/student/review.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('student')) {
+        return;
+      }
+
+      // 복습 모드 초기화
+      if (window.QuizReview) {
+        await QuizReview.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      // 탭 전환
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          btn.classList.add('active');
+          document.getElementById(`${tab}-tab`).classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>퀴즈 풀이 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/file-upload.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/student/dashboard.html">대시보드</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container" style="max-width: 800px;">
+        <!-- 퀴즈 헤더 -->
+        <div class="card mb-lg">
+          <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h2 id="quiz-title-display">로딩중...</h2>
+                <p style="margin: 0; color: var(--text-secondary);" id="quiz-meta"></p>
+              </div>
+              <div class="progress-circle">
+                <svg width="80" height="80">
+                  <circle cx="40" cy="40" r="35" stroke="var(--gray-200)" stroke-width="8" fill="none"></circle>
+                  <circle id="progress-circle" cx="40" cy="40" r="35" stroke="var(--primary-color)" stroke-width="8" fill="none" stroke-dasharray="220" stroke-dashoffset="220" transform="rotate(-90 40 40)"></circle>
+                  <text x="40" y="45" text-anchor="middle" font-size="18" font-weight="600" fill="var(--text-primary)" id="progress-text">0%</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 문제 영역 -->
+        <div id="quiz-container">
+          <div style="text-align: center; padding: 3rem;">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+          </div>
+        </div>
+
+        <!-- 네비게이션 -->
+        <div class="card mt-lg">
+          <div class="card-body" style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn btn-secondary" id="prev-btn" disabled>← 이전 문제</button>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">
+              <span id="current-question">1</span> / <span id="total-questions">10</span>
+            </div>
+            <button class="btn btn-primary" id="next-btn">다음 문제 →</button>
+          </div>
+        </div>
+
+        <!-- 제출 버튼 -->
+        <div class="card mt-md" id="submit-card" style="display: none;">
+          <div class="card-body">
+            <div class="alert alert-success">
+              <strong>모든 문제를 확인했습니다!</strong> 답안을 제출하시겠습니까?
+            </div>
+            <div style="display: flex; gap: var(--spacing-md); justify-content: flex-end;">
+              <button class="btn btn-secondary" id="review-answers-btn">답안 다시 확인</button>
+              <button class="btn btn-primary btn-lg" id="submit-btn">📤 제출하기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <style>
+    .progress-circle {
+      position: relative;
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/student/quiz-taking.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('student')) {
+        return;
+      }
+
+      // 퀴즈 풀이 초기화
+      if (window.QuizTaking) {
+        await QuizTaking.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+    });
+  </script>
+</body>
+</html>
