@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>결과 분석 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/teacher/dashboard.html">대시보드</a>
+          <a href="/teacher/subjects.html" class="active">과목 관리</a>
+          <a href="/teacher/students.html">학생 관리</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+          <button class="btn btn-sm btn-secondary" id="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container">
+        <!-- 상단 헤더 -->
+        <div class="mb-lg" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <button class="btn btn-sm btn-outline mb-md" id="back-btn">← 퀴즈 목록</button>
+            <h1>📈 결과 분석</h1>
+            <p class="text-muted" id="quiz-title-display">로딩중...</p>
+          </div>
+          <button class="btn btn-primary" id="export-excel-btn">
+            📥 엑셀 다운로드
+          </button>
+        </div>
+
+        <!-- 전체 통계 -->
+        <div class="grid grid-cols-4 mb-lg">
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+              <div style="font-size: 1.5rem; font-weight: 700;" id="stat-avg-score">0%</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">평균 점수</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-color);" id="stat-pass-rate">0%</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">합격률 (70%+)</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏆</div>
+              <div style="font-size: 1.5rem; font-weight: 700;" id="stat-highest">0점</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">최고 점수</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📉</div>
+              <div style="font-size: 1.5rem; font-weight: 700;" id="stat-lowest">0점</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">최저 점수</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 탭 -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="students">학생별 성적</button>
+          <button class="tab-btn" data-tab="questions">문제별 정답률</button>
+        </div>
+
+        <!-- 학생별 성적 -->
+        <div id="students-tab" class="tab-content active">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">학생별 성적</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div id="students-table-container">
+                <div style="text-align: center; padding: 3rem;">
+                  <div class="spinner"></div>
+                  <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 문제별 정답률 -->
+        <div id="questions-tab" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">문제별 정답률</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div id="questions-table-container">
+                <div style="text-align: center; padding: 3rem;">
+                  <div class="spinner"></div>
+                  <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/teacher/analytics.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('teacher')) {
+        return;
+      }
+
+      // 분석 초기화
+      if (window.QuizAnalytics) {
+        await QuizAnalytics.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        Auth.signOut();
+      });
+
+      // 탭 전환
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          btn.classList.add('active');
+          document.getElementById(`${tab}-tab`).classList.add('active');
+        });
+      });
+
+      // 뒤로 가기
+      document.getElementById('back-btn').addEventListener('click', () => {
+        if (window.QuizAnalytics && window.QuizAnalytics.quiz) {
+          window.location.href = `/teacher/quiz-list.html?subjectId=${window.QuizAnalytics.quiz.subject_id}`;
+        } else {
+          window.history.back();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

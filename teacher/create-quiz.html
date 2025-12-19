@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>퀴즈 생성 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/file-upload.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/teacher/dashboard.html">대시보드</a>
+          <a href="/teacher/subjects.html" class="active">과목 관리</a>
+          <a href="/teacher/students.html">학생 관리</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+          <button class="btn btn-sm btn-secondary" id="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container" style="max-width: 900px;">
+        <!-- 상단 헤더 -->
+        <div class="mb-lg">
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+            <button class="btn btn-sm btn-outline" id="back-btn">← 퀴즈 목록</button>
+            <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;" id="subject-icon-display"></div>
+            <span id="subject-name-display" class="text-muted">로딩중...</span>
+          </div>
+          <h1>🤖 AI 퀴즈 생성</h1>
+          <p class="text-muted">AI를 활용하여 자동으로 문제를 생성하세요</p>
+        </div>
+
+        <!-- 진행 단계 표시 -->
+        <div class="card mb-lg">
+          <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="flex: 1; text-align: center;" id="step-1" class="step active">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">1️⃣</div>
+                <div style="font-size: 0.875rem; font-weight: 600;">기본 설정</div>
+              </div>
+              <div style="flex: 0 0 50px; height: 2px; background-color: var(--gray-300);"></div>
+              <div style="flex: 1; text-align: center;" id="step-2" class="step">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">2️⃣</div>
+                <div style="font-size: 0.875rem; font-weight: 600;">문제 생성</div>
+              </div>
+              <div style="flex: 0 0 50px; height: 2px; background-color: var(--gray-300);"></div>
+              <div style="flex: 1; text-align: center;" id="step-3" class="step">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">3️⃣</div>
+                <div style="font-size: 0.875rem; font-weight: 600;">미리보기 & 저장</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1: 기본 설정 -->
+        <div id="step-1-content" class="step-content">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">1️⃣ 기본 설정</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="quiz-title" class="form-label">퀴즈 제목 *</label>
+                <input 
+                  type="text" 
+                  id="quiz-title" 
+                  class="form-input" 
+                  placeholder="예: 중간고사 대비 문제"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="question-count" class="form-label">문제 개수 *</label>
+                <input 
+                  type="number" 
+                  id="question-count" 
+                  class="form-input" 
+                  min="5"
+                  max="50"
+                  value="10"
+                  required
+                />
+                <p class="form-help">5~50개 사이로 설정하세요</p>
+              </div>
+
+              <div class="form-group">
+                <label for="choice-count" class="form-label">선택지 개수 *</label>
+                <select id="choice-count" class="form-select">
+                  <option value="2">2지선다</option>
+                  <option value="3">3지선다</option>
+                  <option value="4" selected>4지선다</option>
+                  <option value="5">5지선다</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">파일 업로드 (선택사항)</label>
+                <div id="file-upload-container"></div>
+                <p class="form-help">PDF, 이미지(JPG, PNG), 텍스트 파일을 업로드하면 해당 내용을 바탕으로 문제를 생성합니다.</p>
+              </div>
+
+              <div class="form-group">
+                <label for="quiz-prompt" class="form-label">문제 생성 지시사항 *</label>
+                <textarea 
+                  id="quiz-prompt" 
+                  class="form-textarea" 
+                  rows="5"
+                  placeholder="예: 초등학교 3학년 수준의 덧셈과 뺄셈 문제를 만들어주세요"
+                  required
+                ></textarea>
+                <p class="form-help">AI에게 어떤 문제를 만들지 자세히 설명해주세요. 파일을 업로드한 경우 "이 자료를 바탕으로 문제를 만들어주세요"처럼 작성하면 됩니다.</p>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-primary" id="goto-step-2">
+                다음 단계 →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: 문제 생성 -->
+        <div id="step-2-content" class="step-content" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">2️⃣ AI 문제 생성</h3>
+            </div>
+            <div class="card-body">
+              <div id="generation-status">
+                <div class="alert alert-info">
+                  <strong>준비 완료!</strong> 아래 버튼을 클릭하면 AI가 문제를 생성합니다.
+                </div>
+                
+                <div style="text-align: center; padding: 2rem;">
+                  <button class="btn btn-primary btn-lg" id="generate-btn">
+                    🤖 AI로 문제 생성하기
+                  </button>
+                </div>
+              </div>
+
+              <div id="generation-progress" style="display: none;">
+                <div class="alert alert-info">
+                  <strong>생성 중...</strong> AI가 문제를 만들고 있습니다. 잠시만 기다려주세요.
+                </div>
+                
+                <div class="progress">
+                  <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+                </div>
+                <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);" id="progress-text">
+                  0%
+                </p>
+              </div>
+
+              <div id="generation-result" style="display: none;">
+                <div class="alert alert-success">
+                  <strong>완료!</strong> 문제가 성공적으로 생성되었습니다.
+                </div>
+              </div>
+
+              <div id="generation-error" style="display: none;">
+                <div class="alert alert-error">
+                  <strong>오류 발생!</strong> <span id="error-message"></span>
+                </div>
+                <div style="text-align: center; padding: 1rem;">
+                  <button class="btn btn-primary" id="retry-btn">
+                    🔄 다시 시도
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer" style="justify-content: space-between;">
+              <button class="btn btn-secondary" id="back-to-step-1">
+                ← 이전 단계
+              </button>
+              <button class="btn btn-primary" id="goto-step-3" style="display: none;">
+                다음 단계 →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: 미리보기 & 저장 -->
+        <div id="step-3-content" class="step-content" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">3️⃣ 문제 미리보기 & 저장</h3>
+              <span id="quiz-question-count-display"></span>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-info mb-lg">
+                <strong>안내:</strong> 생성된 문제를 확인하세요. 문제에 만족하시면 아래에서 퀴즈 상태를 선택하고 저장하세요.
+              </div>
+
+              <!-- 문제 목록 -->
+              <div id="questions-preview-container" class="question-preview-list">
+                <!-- 문제들이 여기에 표시됩니다 -->
+              </div>
+
+              <!-- 퀴즈 상태 선택 -->
+              <div class="form-group mt-lg">
+                <label for="quiz-status" class="form-label">퀴즈 상태 *</label>
+                <select id="quiz-status" class="form-select">
+                  <option value="draft">비공개 (학생에게 보이지 않음)</option>
+                  <option value="active">진행중 (학생이 바로 풀 수 있음)</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-footer" style="justify-content: space-between;">
+              <button class="btn btn-secondary" id="back-to-step-2">
+                ← 이전 단계
+              </button>
+              <button class="btn btn-primary btn-lg" id="save-quiz-btn">
+                💾 퀴즈 저장하기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <style>
+    .step {
+      opacity: 0.5;
+      transition: var(--transition);
+    }
+
+    .step.active {
+      opacity: 1;
+    }
+
+    .step.completed {
+      opacity: 1;
+      color: var(--success-color);
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/file-handler.js"></script>
+  <script src="/js/teacher/quiz-generator.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('teacher')) {
+        return;
+      }
+
+      // 퀴즈 생성기 초기화
+      if (window.QuizGenerator) {
+        await QuizGenerator.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        Auth.signOut();
+      });
+
+      // 뒤로 가기
+      document.getElementById('back-btn').addEventListener('click', () => {
+        const subjectId = Utils.getQueryParams().subjectId;
+        window.location.href = `/teacher/quiz-list.html?subjectId=${subjectId}`;
+      });
+    });
+  </script>
+</body>
+</html>

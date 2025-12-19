@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>실시간 모니터링 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/teacher/dashboard.html">대시보드</a>
+          <a href="/teacher/subjects.html" class="active">과목 관리</a>
+          <a href="/teacher/students.html">학생 관리</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+          <button class="btn btn-sm btn-secondary" id="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container">
+        <!-- 상단 헤더 -->
+        <div class="mb-lg">
+          <button class="btn btn-sm btn-outline mb-md" id="back-btn">← 퀴즈 목록</button>
+          <h1>📊 실시간 모니터링</h1>
+          <p class="text-muted" id="quiz-title-display">로딩중...</p>
+        </div>
+
+        <!-- 통계 카드 -->
+        <div class="grid grid-cols-4 mb-lg">
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
+              <div style="font-size: 1.5rem; font-weight: 700;" id="stat-total-students">0</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">전체 학생</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-color);" id="stat-submitted">0</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">제출 완료</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning-color);" id="stat-in-progress">0</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">진행중</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">❌</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--error-color);" id="stat-not-started">0</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">미시작</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 실시간 업데이트 표시 -->
+        <div class="card mb-md">
+          <div class="card-body" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div class="spinner spinner-sm"></div>
+              <span>실시간 업데이트 중...</span>
+            </div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">
+              마지막 업데이트: <span id="last-update">방금 전</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 학생 목록 -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">학생별 진행 상황</h3>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div id="students-table-container">
+              <div style="text-align: center; padding: 3rem;">
+                <div class="spinner"></div>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/teacher/monitor.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('teacher')) {
+        return;
+      }
+
+      // 모니터링 초기화
+      if (window.QuizMonitor) {
+        await QuizMonitor.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        Auth.signOut();
+      });
+
+      // 뒤로 가기
+      document.getElementById('back-btn').addEventListener('click', () => {
+        if (window.QuizMonitor && window.QuizMonitor.quiz) {
+          window.location.href = `/teacher/quiz-list.html?subjectId=${window.QuizMonitor.quiz.subject_id}`;
+        } else {
+          window.history.back();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

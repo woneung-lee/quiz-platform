@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>퀴즈 목록 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/teacher/dashboard.html">대시보드</a>
+          <a href="/teacher/subjects.html" class="active">과목 관리</a>
+          <a href="/teacher/students.html">학생 관리</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+          <button class="btn btn-sm btn-secondary" id="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container">
+        <!-- 상단 헤더 -->
+        <div class="mb-lg" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+              <a href="/teacher/subjects.html" class="btn btn-sm btn-outline">← 과목 목록</a>
+              <div style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" id="subject-icon-display"></div>
+            </div>
+            <h1 id="subject-name-display">로딩중...</h1>
+            <p class="text-muted">퀴즈를 관리하고 생성하세요</p>
+          </div>
+          <button class="btn btn-primary" id="create-quiz-btn">
+            ➕ 새 퀴즈 생성
+          </button>
+        </div>
+
+        <!-- 탭 -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="all">전체 퀴즈</button>
+          <button class="tab-btn" data-tab="draft">비공개</button>
+          <button class="tab-btn" data-tab="active">진행중</button>
+          <button class="tab-btn" data-tab="completed">완료</button>
+        </div>
+
+        <!-- 퀴즈 목록 -->
+        <div id="all-tab" class="tab-content active">
+          <div id="quizzes-container">
+            <div style="text-align: center; padding: 3rem;">
+              <div class="spinner"></div>
+              <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="draft-tab" class="tab-content">
+          <div id="draft-quizzes-container"></div>
+        </div>
+
+        <div id="active-tab" class="tab-content">
+          <div id="active-quizzes-container"></div>
+        </div>
+
+        <div id="completed-tab" class="tab-content">
+          <div id="completed-quizzes-container"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 퀴즈 상태 변경 모달 -->
+  <div id="change-status-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>퀴즈 상태 변경</h2>
+        <button class="modal-close" data-modal="change-status-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>퀴즈 "<strong id="status-quiz-title"></strong>"의 상태를 변경하시겠습니까?</p>
+        <input type="hidden" id="status-quiz-id">
+        <input type="hidden" id="status-new-status">
+        
+        <div class="form-group">
+          <label class="form-label">새 상태</label>
+          <select id="status-select" class="form-select">
+            <option value="draft">비공개 (학생에게 보이지 않음)</option>
+            <option value="active">진행중 (학생이 풀 수 있음)</option>
+            <option value="completed">완료 (제출 마감, 복습만 가능)</option>
+          </select>
+        </div>
+
+        <div class="alert alert-info" id="status-info">
+          상태를 변경하면 학생들의 접근 권한이 변경됩니다.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal="change-status-modal">
+          취소
+        </button>
+        <button type="button" class="btn btn-primary" id="confirm-change-status-btn">
+          변경
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 퀴즈 삭제 확인 모달 -->
+  <div id="delete-quiz-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>퀴즈 삭제</h2>
+        <button class="modal-close" data-modal="delete-quiz-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning">
+          <strong>경고:</strong> 이 퀴즈와 관련된 모든 학생 제출 기록이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
+        </div>
+        <p>정말로 "<strong id="delete-quiz-title"></strong>" 퀴즈를 삭제하시겠습니까?</p>
+        <input type="hidden" id="delete-quiz-id">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal="delete-quiz-modal">
+          취소
+        </button>
+        <button type="button" class="btn btn-error" id="confirm-delete-quiz-btn">
+          삭제
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .quiz-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+      transition: var(--transition);
+    }
+
+    .quiz-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .quiz-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .quiz-card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .quiz-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .quiz-card-stats {
+      display: flex;
+      gap: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background-color: var(--gray-50);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .quiz-stat {
+      flex: 1;
+      text-align: center;
+    }
+
+    .quiz-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .quiz-stat-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .quiz-card-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/teacher/quiz-list.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('teacher')) {
+        return;
+      }
+
+      // 퀴즈 목록 초기화
+      if (window.QuizListManager) {
+        await QuizListManager.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        Auth.signOut();
+      });
+
+      // 탭 전환
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          btn.classList.add('active');
+          document.getElementById(`${tab}-tab`).classList.add('active');
+          
+          if (window.QuizListManager) {
+            QuizListManager.filterQuizzesByStatus(tab);
+          }
+        });
+      });
+
+      // 퀴즈 생성 버튼
+      document.getElementById('create-quiz-btn').addEventListener('click', () => {
+        const subjectId = Utils.getQueryParams().subjectId;
+        window.location.href = `/teacher/create-quiz.html?subjectId=${subjectId}`;
+      });
+
+      // 모달 닫기
+      document.querySelectorAll('.modal-close, .btn-secondary[data-modal]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const modalId = e.target.dataset.modal || e.target.closest('.modal-close').parentElement.parentElement.parentElement.id;
+          Utils.modal.hide(modalId);
+        });
+      });
+
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            Utils.modal.hide(modal.id);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
