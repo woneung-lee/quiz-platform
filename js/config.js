@@ -1,8 +1,8 @@
 // 환경 설정
 const CONFIG = {
   // Supabase 설정 (실제 값으로 교체 필요)
-  SUPABASE_URL: 'https://your-project.supabase.co',
-  SUPABASE_ANON_KEY: 'your_supabase_anon_key',
+  SUPABASE_URL: 'https://wpmhiibazynjkfkyvcxj.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_AGJ6C--1yTARsg99Y0FQDw_jyKH2tBZ',
   SUPABASE_FUNCTION_URL: 'https://your-project.supabase.co/functions/v1',
   
   // 파일 업로드 설정
