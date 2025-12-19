@@ -97,8 +97,8 @@ const StudentsManager = {
         <table class="table">
           <thead>
             <tr>
+              <th>번호</th>
               <th>이름</th>
-              <th>로그인 아이디</th>
               <th>제출한 퀴즈</th>
               <th>평균 점수</th>
               <th>가입일</th>
@@ -124,15 +124,13 @@ const StudentsManager = {
       html += `
         <tr>
           <td>
+            <strong>${student.student_number || '-'}</strong>
+          </td>
+          <td>
             <div style="display: flex; align-items: center; gap: 0.75rem;">
               <div class="avatar avatar-sm">${student.name.charAt(0)}</div>
               <strong>${Utils.escapeHtml(student.name)}</strong>
             </div>
-          </td>
-          <td>
-            <code style="background-color: var(--gray-100); padding: 0.25rem 0.5rem; border-radius: 4px;">
-              ${Utils.escapeHtml(student.username)}
-            </code>
           </td>
           <td>${submittedCount}개</td>
           <td>
@@ -175,7 +173,7 @@ const StudentsManager = {
     } else {
       this.filteredStudents = this.students.filter(student => 
         student.name.toLowerCase().includes(term) ||
-        student.username.toLowerCase().includes(term)
+        (student.student_number && student.student_number.toString().includes(term))
       );
     }
     
@@ -196,13 +194,18 @@ const StudentsManager = {
       Utils.toggleLoading(submitBtn, true);
       
       const name = document.getElementById('student-name').value.trim();
-      const username = document.getElementById('student-username').value.trim();
+      const studentNumber = parseInt(document.getElementById('student-number').value);
       const password = document.getElementById('student-password').value;
       const passwordConfirm = document.getElementById('student-password-confirm').value;
       
       // 유효성 검사
-      if (!name || !username || !password) {
+      if (!name || !studentNumber || !password) {
         Utils.showToast('모든 필드를 입력해주세요.', 'warning');
+        return;
+      }
+      
+      if (studentNumber < 1 || studentNumber > 999) {
+        Utils.showToast('번호는 1-999 사이여야 합니다.', 'error');
         return;
       }
       
@@ -216,24 +219,19 @@ const StudentsManager = {
         return;
       }
       
-      if (!/^[a-zA-Z0-9_]{4,20}$/.test(username)) {
-        Utils.showToast('아이디는 영문, 숫자, 언더스코어만 사용 가능합니다 (4-20자).', 'error');
-        return;
-      }
-      
       // 학생 생성
-      await Auth.createStudent(name, username, password, this.teacherId);
+      await Auth.createStudent(name, studentNumber, password, this.teacherId);
       
       Utils.modal.hide('student-modal');
       await this.loadStudents();
       
       // 생성된 계정 정보 표시
-      Utils.showToast(`학생 계정이 생성되었습니다!\n아이디: ${username}\n비밀번호: ${password}`, 'success');
+      Utils.showToast(`학생 계정이 생성되었습니다!\n이름: ${name} (번호 ${studentNumber})\n비밀번호: ${password}`, 'success');
       
     } catch (error) {
       console.error('Student creation error:', error);
-      if (error.message.includes('이미 사용 중')) {
-        Utils.showToast('이미 사용 중인 아이디입니다.', 'error');
+      if (error.message.includes('이미 사용')) {
+        Utils.showToast('이미 사용 중인 번호입니다.', 'error');
       } else {
         Utils.handleError(error, '학생 추가 중 오류가 발생했습니다.');
       }
