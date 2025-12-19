@@ -314,7 +314,7 @@
 
 .table th,
 .table td {
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   text-align: left;
   border-bottom: 1px solid var(--border-color);
 }
@@ -638,4 +638,197 @@
 .pagination-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* 퀴즈 문제 카드 */
+.question-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.question-preview-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.question-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.question-number {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.question-text {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.choice-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.choice-item:hover:not(.disabled) {
+  border-color: var(--primary-color);
+  background-color: var(--gray-50);
+}
+
+.choice-item.selected {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.choice-item.correct {
+  border-color: var(--success-color);
+  background-color: var(--success-light);
+}
+
+.choice-item.wrong {
+  border-color: var(--error-color);
+  background-color: var(--error-light);
+}
+
+.choice-item.disabled {
+  cursor: default;
+}
+
+.choice-label {
+  flex-shrink: 0;
+  font-weight: 600;
+  min-width: 32px;
+}
+
+.choice-text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.choice-check {
+  flex-shrink: 0;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.explanation-section {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--gray-50);
+  border-left: 4px solid var(--info-color);
+  border-radius: var(--border-radius);
+}
+
+.explanation-label {
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-primary);
+}
+
+.explanation-text {
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.review-question-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* 결과 요약 */
+.result-summary {
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  border-radius: var(--border-radius-xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.result-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.result-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+  color: white;
+}
+
+.result-score {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+}
+
+.result-percentage {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.9;
+}
+
+.result-message {
+  font-size: 1.125rem;
+  opacity: 0.9;
+}
+
+/* 진행률 표시 */
+.progress {
+  width: 100%;
+  height: 8px;
+  background-color: var(--gray-200);
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.border-radius-full {
+  border-radius: 9999px;
 }
