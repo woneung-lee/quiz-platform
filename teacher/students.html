@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학생 관리 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/teacher/dashboard.html">대시보드</a>
+          <a href="/teacher/subjects.html">과목 관리</a>
+          <a href="/teacher/students.html" class="active">학생 관리</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+          <button class="btn btn-sm btn-secondary" id="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container">
+        <div class="mb-lg" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1>학생 관리</h1>
+            <p class="text-muted">학생 계정을 생성하고 관리하세요</p>
+          </div>
+          <button class="btn btn-primary" id="add-student-btn">
+            ➕ 학생 추가
+          </button>
+        </div>
+
+        <!-- 학생 목록 -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">학생 목록 (<span id="student-count">0</span>명)</h3>
+            <div style="display: flex; gap: 0.5rem;">
+              <input 
+                type="text" 
+                id="search-input" 
+                class="form-input" 
+                placeholder="학생 검색..."
+                style="width: 250px;"
+              />
+            </div>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div id="students-table-container">
+              <div style="text-align: center; padding: 3rem;">
+                <div class="spinner"></div>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">로딩 중...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 학생 추가 모달 -->
+  <div id="student-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>학생 추가</h2>
+        <button class="modal-close" data-modal="student-modal">&times;</button>
+      </div>
+      <form id="student-form" class="modal-body">
+        <div class="alert alert-info">
+          <strong>안내:</strong> 학생이 로그인할 때 사용할 아이디와 비밀번호를 설정합니다.
+        </div>
+
+        <div class="form-group">
+          <label for="student-name" class="form-label">이름 *</label>
+          <input 
+            type="text" 
+            id="student-name" 
+            class="form-input" 
+            placeholder="홍길동"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="student-username" class="form-label">로그인 아이디 *</label>
+          <input 
+            type="text" 
+            id="student-username" 
+            class="form-input" 
+            placeholder="student123"
+            pattern="[a-zA-Z0-9_]{4,20}"
+            required
+          />
+          <p class="form-help">영문, 숫자, 언더스코어(_)만 사용 가능 (4-20자)</p>
+        </div>
+
+        <div class="form-group">
+          <label for="student-password" class="form-label">초기 비밀번호 *</label>
+          <input 
+            type="password" 
+            id="student-password" 
+            class="form-input" 
+            placeholder="8자 이상"
+            minlength="8"
+            required
+          />
+          <p class="form-help">학생에게 알려줄 초기 비밀번호 (8자 이상)</p>
+        </div>
+
+        <div class="form-group">
+          <label for="student-password-confirm" class="form-label">비밀번호 확인 *</label>
+          <input 
+            type="password" 
+            id="student-password-confirm" 
+            class="form-input" 
+            placeholder="비밀번호 재입력"
+            minlength="8"
+            required
+          />
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal="student-modal">
+          취소
+        </button>
+        <button type="submit" form="student-form" class="btn btn-primary" id="student-submit-btn">
+          추가
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 학생 정보 모달 -->
+  <div id="student-info-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>학생 정보</h2>
+        <button class="modal-close" data-modal="student-info-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">이름</div>
+            <div style="font-size: 1.125rem; font-weight: 600;" id="info-name"></div>
+          </div>
+          <div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">로그인 아이디</div>
+            <div style="font-size: 1.125rem; font-weight: 600;" id="info-username"></div>
+          </div>
+          <div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">가입일</div>
+            <div id="info-created"></div>
+          </div>
+          <div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">제출한 퀴즈</div>
+            <div id="info-submissions"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal="student-info-modal">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 학생 삭제 확인 모달 -->
+  <div id="delete-student-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>학생 삭제</h2>
+        <button class="modal-close" data-modal="delete-student-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning">
+          <strong>경고:</strong> 이 학생의 모든 퀴즈 제출 기록이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
+        </div>
+        <p>정말로 "<strong id="delete-student-name"></strong>" 학생을 삭제하시겠습니까?</p>
+        <input type="hidden" id="delete-student-id">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal="delete-student-modal">
+          취소
+        </button>
+        <button type="button" class="btn btn-error" id="confirm-delete-student-btn">
+          삭제
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/teacher/students.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      if (!Auth.requireAuth('teacher')) {
+        return;
+      }
+
+      // 학생 관리 초기화
+      if (window.StudentsManager) {
+        await StudentsManager.init();
+      }
+
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        Auth.signOut();
+      });
+
+      // 모달 닫기
+      document.querySelectorAll('.modal-close, .btn-secondary[data-modal]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const modalId = e.target.dataset.modal || e.target.closest('.modal-close').parentElement.parentElement.parentElement.id;
+          Utils.modal.hide(modalId);
+        });
+      });
+
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            Utils.modal.hide(modal.id);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

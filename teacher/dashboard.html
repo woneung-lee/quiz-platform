@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대시보드 - Quiz Platform</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="header-inner container-fluid">
+        <div class="header-logo">📚 Quiz Platform</div>
+        <nav class="header-nav">
+          <a href="/teacher/dashboard.html" class="active">대시보드</a>
+          <a href="/teacher/subjects.html">과목 관리</a>
+          <a href="/teacher/students.html">학생 관리</a>
+        </nav>
+        <div class="header-user">
+          <span class="user-name" id="user-name">로딩중...</span>
+          <button class="btn btn-sm btn-secondary" id="logout-btn">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="page-content">
+      <div class="container">
+        <div class="mb-lg">
+          <h1>대시보드</h1>
+          <p class="text-muted">환영합니다! 전체 현황을 확인하세요.</p>
+        </div>
+
+        <!-- 통계 카드 -->
+        <div class="grid grid-cols-4 mb-lg">
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📚</div>
+              <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="stat-subjects">0</div>
+              <div style="color: var(--text-secondary);">과목</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👥</div>
+              <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="stat-students">0</div>
+              <div style="color: var(--text-secondary);">학생</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📝</div>
+              <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="stat-quizzes">0</div>
+              <div style="color: var(--text-secondary);">생성한 퀴즈</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="text-align: center;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">✅</div>
+              <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="stat-submissions">0</div>
+              <div style="color: var(--text-secondary);">제출된 답안</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 최근 활동 -->
+        <div class="grid grid-cols-2">
+          <!-- 진행 중인 퀴즈 -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">진행 중인 퀴즈</h3>
+              <a href="/teacher/subjects.html" class="btn btn-sm btn-outline">전체 보기</a>
+            </div>
+            <div class="card-body">
+              <div id="active-quizzes-list">
+                <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                  <div class="spinner"></div>
+                  <p style="margin-top: 1rem;">로딩 중...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 최근 학생 활동 -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">최근 학생 활동</h3>
+              <a href="/teacher/students.html" class="btn btn-sm btn-outline">전체 보기</a>
+            </div>
+            <div class="card-body">
+              <div id="recent-submissions-list">
+                <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                  <div class="spinner"></div>
+                  <p style="margin-top: 1rem;">로딩 중...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 빠른 작업 -->
+        <div class="card mt-lg">
+          <div class="card-header">
+            <h3 class="card-title">빠른 작업</h3>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-cols-3 gap-lg">
+              <a href="/teacher/subjects.html" class="card" style="text-decoration: none; cursor: pointer; transition: var(--transition);">
+                <div class="card-body" style="text-align: center;">
+                  <div style="font-size: 3rem; margin-bottom: 1rem;">➕</div>
+                  <h4>새 과목 만들기</h4>
+                  <p class="text-muted">과목을 추가하고 관리하세요</p>
+                </div>
+              </a>
+
+              <a href="/teacher/students.html" class="card" style="text-decoration: none; cursor: pointer; transition: var(--transition);">
+                <div class="card-body" style="text-align: center;">
+                  <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
+                  <h4>학생 추가하기</h4>
+                  <p class="text-muted">새로운 학생 계정을 생성하세요</p>
+                </div>
+              </a>
+
+              <a href="/teacher/subjects.html" class="card" style="text-decoration: none; cursor: pointer; transition: var(--transition);">
+                <div class="card-body" style="text-align: center;">
+                  <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+                  <h4>AI 퀴즈 생성</h4>
+                  <p class="text-muted">AI로 문제를 자동 생성하세요</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/teacher/dashboard.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      
+      // 선생님만 접근 가능
+      if (!Auth.requireAuth('teacher')) {
+        return;
+      }
+
+      // 대시보드 초기화
+      if (window.TeacherDashboard) {
+        await TeacherDashboard.init();
+      }
+
+      // 사용자 이름 표시
+      const user = Auth.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      // 로그아웃
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        Auth.signOut();
+      });
+    });
+  </script>
+</body>
+</html>
