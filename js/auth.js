@@ -56,8 +56,8 @@ const Auth = {
     window.dispatchEvent(new CustomEvent('authChange', { detail: { event, user: this.currentUser } }));
   },
   
-  // 아이디/비밀번호 회원가입 (선생님)
-  async signUpWithUsername(username, password, name) {
+  // 아이디/비밀번호 회원가입 (선생님) - name 인자 제거
+  async signUpWithUsername(username, password) {
     try {
       // 이메일 형식으로 변환 (내부적으로만 사용)
       const email = `${username}@teachers.local`;
@@ -81,13 +81,13 @@ const Auth = {
         throw authError;
       }
       
-      // users 테이블에 정보 저장
+      // users 테이블에 정보 저장 - name 대신 username 저장
       const userData = await DB.users.create({
         id: authData.user.id,
         username,
         email,
         role: 'teacher',
-        name
+        name: username // 이름 입력이 없으므로 아이디를 이름으로 저장
       });
       
       this.currentUser = {
@@ -107,7 +107,6 @@ const Auth = {
   // 아이디/비밀번호 로그인 (선생님)
   async signInWithUsername(username, password, role = 'teacher') {
     try {
-      // 이메일 형식으로 변환
       const email = `${username}@teachers.local`;
       
       const { data, error } = await SupabaseClient.getInstance().auth.signInWithPassword({
@@ -124,7 +123,10 @@ const Auth = {
         throw new Error('권한이 없습니다.');
       }
       
-      Utils.showToast(`환영합니다, ${this.currentUser.name}님!`, 'success');
+      // name이 없을 경우 username 출력
+      const displayName = this.currentUser.name || this.currentUser.username;
+      Utils.showToast(`환영합니다, ${displayName}님!`, 'success');
+      
       return this.currentUser;
     } catch (error) {
       console.error('Login error:', error);
@@ -136,14 +138,12 @@ const Auth = {
   // 학생 로그인 (ID 선택 방식)
   async signInStudent(studentId, password) {
     try {
-      // 학생 정보 가져오기
       const student = await DB.users.getById(studentId);
       
       if (!student || student.role !== 'student') {
         throw new Error('학생 정보를 찾을 수 없습니다.');
       }
       
-      // 학생은 username@students.local 형식의 이메일 사용
       const email = `${student.username}@students.local`;
       
       const { data, error } = await SupabaseClient.getInstance().auth.signInWithPassword({
@@ -155,7 +155,10 @@ const Auth = {
       
       await this.loadUser();
       
-      Utils.showToast(`환영합니다, ${this.currentUser.name}님!`, 'success');
+      // name이 없을 경우 username 출력
+      const displayName = this.currentUser.name || this.currentUser.username;
+      Utils.showToast(`환영합니다, ${displayName}님!`, 'success');
+      
       return this.currentUser;
     } catch (error) {
       console.error('Student login error:', error);
@@ -164,16 +167,13 @@ const Auth = {
     }
   },
   
-  // 로그아웃
+  // 로그아웃 (이하 동일)
   async signOut() {
     try {
       const { error } = await SupabaseClient.getInstance().auth.signOut();
-      
       if (error) throw error;
-      
       this.currentUser = null;
       Utils.storage.remove(window.CONFIG.STORAGE_KEYS.USER);
-      
       window.location.href = '/login.html';
     } catch (error) {
       console.error('Signout error:', error);
@@ -182,32 +182,21 @@ const Auth = {
     }
   },
   
-  // 학생 계정 생성 (선생님이 생성)
+  // 학생 계정 생성 (이하 동일)
   async createStudent(name, studentNumber, password, teacherId) {
     try {
-      // username 생성 (student_번호 형식)
       const username = `student_${studentNumber}`;
       const email = `${username}@students.local`;
-      
-      // Supabase Auth에 계정 생성
       const { data: authData, error: authError } = await SupabaseClient.getInstance().auth.admin.createUser({
         email,
         password,
         email_confirm: true,
-        user_metadata: {
-          role: 'student',
-          student_number: studentNumber
-        }
+        user_metadata: { role: 'student', student_number: studentNumber }
       });
-      
       if (authError) {
-        if (authError.message.includes('already registered')) {
-          throw new Error('이미 사용중인 번호입니다.');
-        }
+        if (authError.message.includes('already registered')) throw new Error('이미 사용중인 번호입니다.');
         throw authError;
       }
-      
-      // users 테이블에 정보 저장
       const userData = await DB.users.create({
         id: authData.user.id,
         username,
@@ -217,7 +206,6 @@ const Auth = {
         teacher_id: teacherId,
         student_number: studentNumber
       });
-      
       Utils.showToast('학생 계정이 생성되었습니다.', 'success');
       return userData;
     } catch (error) {
@@ -226,61 +214,38 @@ const Auth = {
       throw error;
     }
   },
-  
-  // 현재 사용자 가져오기
+
   getCurrentUser() {
-    if (this.currentUser) {
-      return this.currentUser;
-    }
-    
+    if (this.currentUser) return this.currentUser;
     const stored = Utils.storage.get(window.CONFIG.STORAGE_KEYS.USER);
-    if (stored) {
-      this.currentUser = stored;
-      return stored;
-    }
-    
+    if (stored) { this.currentUser = stored; return stored; }
     return null;
   },
-  
-  // 인증 확인
-  isAuthenticated() {
-    return !!this.getCurrentUser();
-  },
-  
-  // 역할 확인
-  hasRole(role) {
-    const user = this.getCurrentUser();
-    return user && user.role === role;
-  },
-  
-  // 페이지 접근 권한 확인
+
+  isAuthenticated() { return !!this.getCurrentUser(); },
+  hasRole(role) { const user = this.getCurrentUser(); return user && user.role === role; },
+
   requireAuth(requiredRole = null) {
     const user = this.getCurrentUser();
-    
     if (!user) {
       Utils.showToast('로그인이 필요합니다.', 'warning');
       window.location.href = '/login.html';
       return false;
     }
-    
     if (requiredRole && user.role !== requiredRole) {
       Utils.showToast('접근 권한이 없습니다.', 'error');
       window.location.href = user.role === 'teacher' ? '/teacher/dashboard.html' : '/student/dashboard.html';
       return false;
     }
-    
     return true;
   },
-  
-  // 비밀번호 재설정
+
   async resetPassword(email) {
     try {
       const { error } = await SupabaseClient.getInstance().auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password.html`
       });
-      
       if (error) throw error;
-      
       Utils.showToast('비밀번호 재설정 이메일이 발송되었습니다.', 'success');
     } catch (error) {
       console.error('Password reset error:', error);
@@ -288,16 +253,11 @@ const Auth = {
       throw error;
     }
   },
-  
-  // 비밀번호 변경
+
   async updatePassword(newPassword) {
     try {
-      const { error } = await SupabaseClient.getInstance().auth.updateUser({
-        password: newPassword
-      });
-      
+      const { error } = await SupabaseClient.getInstance().auth.updateUser({ password: newPassword });
       if (error) throw error;
-      
       Utils.showToast('비밀번호가 변경되었습니다.', 'success');
     } catch (error) {
       console.error('Password update error:', error);
@@ -307,13 +267,8 @@ const Auth = {
   }
 };
 
-// 전역으로 export
 window.Auth = Auth;
 
-// 전역으로 export
-window.Auth = Auth;
-
-// 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', async () => {
   await Auth.init();
 });
