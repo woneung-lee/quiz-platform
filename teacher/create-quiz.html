@@ -94,11 +94,11 @@
                 <p class="form-help">5~50개 사이로 설정하세요</p>
               </div>
 
+              <!-- 🔥 수정: OX, 4지선다, 5지선다만 -->
               <div class="form-group">
                 <label for="choice-count" class="form-label">선택지 개수 *</label>
                 <select id="choice-count" class="form-select">
-                  <option value="2">2지선다</option>
-                  <option value="3">3지선다</option>
+                  <option value="2">OX 퀴즈</option>
                   <option value="4" selected>4지선다</option>
                   <option value="5">5지선다</option>
                 </select>
@@ -110,13 +110,29 @@
                 <p class="form-help">PDF, 이미지(JPG, PNG), 텍스트 파일을 업로드하면 해당 내용을 바탕으로 문제를 생성합니다.</p>
               </div>
 
+              <!-- 🔥 수정: 기본값 1학년, "선택 안함" 제거 -->
+              <div class="form-group">
+                <label for="grade-select" class="form-label">
+                  학년 선택 *
+                </label>
+                <select id="grade-select" class="form-select">
+                  <option value="1" selected>1학년 (만 6-7세) - 한글 학습 단계</option>
+                  <option value="2">2학년 (만 7-8세) - 기초 다지기</option>
+                  <option value="3">3학년 (만 8-9세) - 개념 학습 시작</option>
+                  <option value="4">4학년 (만 9-10세) - 원리 이해</option>
+                  <option value="5">5학년 (만 10-11세) - 심화 학습</option>
+                  <option value="6">6학년 (만 11-12세) - 중학교 준비</option>
+                </select>
+                <p class="form-help">학년을 선택하면 해당 학년 수준에 맞는 문제가 생성됩니다.</p>
+              </div>
+
               <div class="form-group">
                 <label for="quiz-prompt" class="form-label">문제 생성 지시사항 *</label>
                 <textarea 
                   id="quiz-prompt" 
                   class="form-textarea" 
                   rows="5"
-                  placeholder="예: 초등학교 3학년 수준의 덧셈과 뺄셈 문제를 만들어주세요"
+                  placeholder="예: 덧셈과 뺄셈 문제를 만들어주세요"
                   required
                 ></textarea>
                 <p class="form-help">AI에게 어떤 문제를 만들지 자세히 설명해주세요. 파일을 업로드한 경우 "이 자료를 바탕으로 문제를 만들어주세요"처럼 작성하면 됩니다.</p>
