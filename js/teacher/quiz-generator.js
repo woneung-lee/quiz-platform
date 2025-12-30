@@ -202,7 +202,7 @@ const QuizGenerator = {
       this.updateProgress(30, `${gradeText} 수준의 AI 문제 생성 중...`);
       
       // Supabase Edge Function 호출
-      const { data, error } = await supabase.functions.invoke('generate-quiz', {
+      const { data, error } = await SupabaseClient.getInstance().functions.invoke('generate-quiz', {
         body: {
           prompt,
           fileContent,
