@@ -8,6 +8,7 @@ const QuizGenerator = {
   uploadedFile: null,
   generatedQuestions: [],
   currentStep: 1,
+  gradeLevel: null, // 🆕 학년 선택
   
   // 초기화
   async init() {
@@ -164,7 +165,7 @@ const QuizGenerator = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
   
-  // AI 문제 생성
+  // 🆕 AI 문제 생성 (Supabase Edge Function 호출)
   async generateQuestions() {
     const gotoStep3Btn = document.getElementById('goto-step-3');
     
@@ -183,6 +184,10 @@ const QuizGenerator = {
       const choiceCount = parseInt(document.getElementById('choice-count').value);
       const prompt = document.getElementById('quiz-prompt').value.trim();
       
+      // 🆕 학년 선택 가져오기
+      const gradeSelect = document.getElementById('grade-select');
+      this.gradeLevel = gradeSelect?.value ? parseInt(gradeSelect.value) : null;
+      
       let fileContent = null;
       let fileType = null;
       
@@ -193,21 +198,33 @@ const QuizGenerator = {
         fileType = this.uploadedFile.type;
       }
       
-      this.updateProgress(30, 'AI가 문제를 생성하고 있습니다...');
+      // 🆕 학년 표시
+      const gradeText = this.gradeLevel ? `${this.gradeLevel}학년` : '초등학생';
+      this.updateProgress(30, `${gradeText} 수준의 AI 문제 생성 중...`);
       
-      // OpenAI API 호출
-      const questions = await OpenAIClient.generateQuiz({
-        prompt,
-        fileContent,
-        fileType,
-        questionCount,
-        choiceCount
+      // 🔥 Supabase Edge Function 호출
+      const { data, error } = await supabase.functions.invoke('generate-quiz', {
+        body: {
+          prompt,
+          fileContent,
+          fileType,
+          questionCount,
+          choiceCount,
+          gradeLevel: this.gradeLevel // 🆕 학년 전송
+        }
       });
+      
+      if (error) throw error;
+      
+      // 에러 응답 체크
+      if (data.error) {
+        throw new Error(data.error);
+      }
       
       this.updateProgress(80, '문제 검증 중...');
       
       // 생성된 문제 저장
-      this.generatedQuestions = questions;
+      this.generatedQuestions = data.questions;
       
       this.updateProgress(100, '완료!');
       
@@ -216,6 +233,12 @@ const QuizGenerator = {
         document.getElementById('generation-progress').style.display = 'none';
         document.getElementById('generation-result').style.display = 'block';
         gotoStep3Btn.style.display = 'inline-flex';
+        
+        // 🆕 학년 정보 포함 성공 메시지
+        Utils.showToast(
+          `${gradeText} 수준 문제 ${this.generatedQuestions.length}개가 생성되었습니다!`,
+          'success'
+        );
       }, 500);
       
     } catch (error) {
@@ -250,7 +273,7 @@ const QuizGenerator = {
         <div class="question-preview-card" data-question-index="${index}">
           <div class="question-preview-header">
             <span class="question-number">문제 ${index + 1}</span>
-            <button class="btn-icon" onclick="QuizGenerator.editQuestion(${index})" title="수정">
+            <button class="btn-icon" onclick="QuizGenerator.editQuestion(${index})" title="전체 수정">
               ✏️
             </button>
           </div>
@@ -261,7 +284,7 @@ const QuizGenerator = {
             <div class="choices-list">
               ${question.choices.map((choice, choiceIndex) => `
                 <div class="choice-item ${choiceIndex === question.correctAnswer ? 'correct' : ''}" data-choice-index="${choiceIndex}">
-                  <span class="choice-label">${choiceLabels[choiceIndex] || `${choiceIndex + 1}`}</span>
+                  <span class="choice-label">${choiceLabels[choiceIndex]}</span>
                   <span class="choice-text editable" data-field="choice">${Utils.escapeHtml(choice)}</span>
                   <button class="choice-check-btn ${choiceIndex === question.correctAnswer ? 'active' : ''}" 
                           onclick="QuizGenerator.setCorrectAnswer(${index}, ${choiceIndex})"
