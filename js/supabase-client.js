@@ -266,6 +266,18 @@ const DB = {
   
   // 제출 관련
   submissions: {
+    // 제출 생성
+    async create(submissionData) {
+      const { data, error } = await SupabaseClient.getInstance()
+        .from('submissions')
+        .insert(submissionData)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    
     // 제출 생성 또는 업데이트
     async upsert(submissionData) {
       const { data, error } = await SupabaseClient.getInstance()
