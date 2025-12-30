@@ -6,54 +6,167 @@
   <title>Quiz Platform - AI 기반 실시간 퀴즈 학습 플랫폼</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/components.css">
+  <style>
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: var(--spacing-2xl);
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-lg);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      margin-bottom: var(--spacing-2xl);
+      opacity: 0.95;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: var(--spacing-lg);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn {
+      padding: var(--spacing-lg) var(--spacing-2xl);
+      font-size: 1.125rem;
+      font-weight: 600;
+      border-radius: var(--border-radius-lg);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .hero-btn-primary {
+      background-color: white;
+      color: #667eea;
+    }
+
+    .hero-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .hero-btn-secondary {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .hero-btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .features {
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-xl);
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .feature-card {
+      background-color: var(--bg-primary);
+      padding: var(--spacing-xl);
+      border-radius: var(--border-radius-xl);
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .feature-icon {
+      font-size: 4rem;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .feature-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.25rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="container-fluid">
-      <a href="/" class="navbar-brand">📚 Quiz Platform</a>
-      <div class="navbar-menu">
-        <a href="#features" class="navbar-link">기능</a>
-        <a href="#about" class="navbar-link">소개</a>
-        <a href="/login.html" class="btn btn-primary btn-sm">로그인</a>
-      </div>
-    </div>
-  </nav>
-
   <div class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <h1 class="hero-title">
-          🤖 AI가 만드는<br>
-          맞춤형 퀴즈 학습
-        </h1>
-        <p class="hero-description">
-          OpenAI 기술로 자동 문제 생성부터<br>
-          실시간 모니터링, 결과 분석까지
-        </p>
-        <div style="display: flex; gap: var(--spacing-md); justify-content: center; margin-top: var(--spacing-xl);">
-          <a href="/login.html" class="btn btn-primary btn-lg">
-            시작하기
-          </a>
-          <a href="#features" class="btn btn-outline btn-lg">
-            자세히 보기
-          </a>
-        </div>
+    <div class="hero-content">
+      <h1 class="hero-title">📚 Quiz Platform</h1>
+      <p class="hero-subtitle">
+        AI 기반 실시간 퀴즈 학습 플랫폼<br>
+        ChatGPT로 문제를 자동 생성하고, 실시간으로 학습하세요
+      </p>
+      <div class="hero-buttons">
+        <a href="/login.html" class="hero-btn hero-btn-primary">
+          시작하기
+        </a>
+        <a href="#features" class="hero-btn hero-btn-secondary">
+          더 알아보기
+        </a>
       </div>
     </div>
   </div>
 
-  <div class="container" id="features" style="padding: var(--spacing-2xl) var(--spacing-md);">
-    <h2 style="text-align: center; font-size: 2rem; margin-bottom: var(--spacing-xl);">
-      주요 기능
-    </h2>
-
-    <div class="feature-grid">
+  <div id="features" class="features">
+    <h2 class="features-title">주요 기능</h2>
+    <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">🤖</div>
         <h3 class="feature-title">AI 문제 생성</h3>
         <p class="feature-description">
-          PDF, 이미지, 텍스트를 업로드하면 
-          GPT-4가 자동으로 퀴즈를 만듭니다.
+          ChatGPT를 활용하여 텍스트나 파일(PDF, 이미지)로부터 
+          자동으로 문제를 생성합니다.
         </p>
       </div>
 
