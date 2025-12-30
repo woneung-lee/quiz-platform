@@ -2,7 +2,7 @@
 const CONFIG = {
   // Supabase 설정 (실제 값으로 교체 필요)
   SUPABASE_URL: 'https://wpmhiibazynjkfkyvcxj.supabase.co',
-  SUPABASE_ANON_KEY: 'sb_publishable_AGJ6C--1yTARsg99Y0FQDw_jyKH2tBZ',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwbWhpaWJhenluamtma3l2Y3hqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU3NDcyNzQsImV4cCI6MjA4MTMyMzI3NH0.pVuN9jUEvhRFxgTDZFUue9fu-Vy0mHcPxztOxp52S4A',
   SUPABASE_FUNCTION_URL: 'https://your-project.supabase.co/functions/v1',
   
   // 파일 업로드 설정
