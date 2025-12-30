@@ -300,88 +300,81 @@ const QuizAnalytics = {
     container.innerHTML = html;
   },
   
-  // 엑셀 내보내기
+// 엑셀 내보내기 (보완 버전)
   exportToExcel() {
     try {
       const wb = XLSX.utils.book_new();
       
-      // Sheet 1: 퀴즈 정보
+      // --- 시트 1: 퀴즈 요약 정보 ---
       const quizInfo = [
+        ['퀴즈 분석 리포트'],
+        [''],
         ['퀴즈 제목', this.quiz.title],
-        ['과목', ''],
         ['문제 수', this.quiz.question_count],
-        ['선택지 수', `${this.quiz.choice_count}지선다`],
-        ['생성일', Utils.formatDate(this.quiz.created_at, 'YYYY-MM-DD')],
         ['제출자 수', this.submissions.length],
-        ['평균 점수', document.getElementById('stat-avg-score').textContent]
+        ['평균 점수', document.getElementById('stat-avg-score').textContent],
+        ['분석 일시', Utils.formatDate(new Date(), 'YYYY-MM-DD HH:mm')]
       ];
-      
       const ws1 = XLSX.utils.aoa_to_sheet(quizInfo);
-      XLSX.utils.book_append_sheet(wb, ws1, '퀴즈 정보');
-      
-      // Sheet 2: 학생별 성적
-      const studentData = [
-        ['순위', '학생 이름', '점수', '정답률', '정답 수', '오답 수', '제출 시간']
-      ];
-      
+      XLSX.utils.book_append_sheet(wb, ws1, '요약');
+
+      // --- 시트 2: 학생별 성적 리스트 ---
+      const studentData = [['순위', '학생 이름', '점수', '정답률', '정답 수', '오답 수', '제출 시간']];
       const sortedSubmissions = [...this.submissions].sort((a, b) => b.score - a.score);
       sortedSubmissions.forEach((submission, index) => {
         const percentage = Math.round((submission.score / submission.total_questions) * 100);
-        const wrong = submission.total_questions - submission.score;
-        
         studentData.push([
           index + 1,
           submission.users.name,
           `${submission.score}/${submission.total_questions}`,
           `${percentage}%`,
           submission.score,
-          wrong,
+          submission.total_questions - submission.score,
           Utils.formatDate(submission.submitted_at, 'YYYY-MM-DD HH:mm')
         ]);
       });
-      
       const ws2 = XLSX.utils.aoa_to_sheet(studentData);
-      XLSX.utils.book_append_sheet(wb, ws2, '학생별 성적');
-      
-      // Sheet 3: 문제별 정답률
-      const questionData = [
-        ['문제 번호', '문제 내용', '정답자 수', '오답자 수', '정답률', '난이도']
-      ];
-      
+      XLSX.utils.book_append_sheet(wb, ws2, '학생별 결과');
+
+      // --- 시트 3: ★ 문항별 상세 정오표 (핵심 추가) ★ ---
+      // 가로축에 학생 이름, 세로축에 문제 번호가 나열되는 표입니다.
+      const detailHeaders = ['번호', '문제 내용', '정답률'];
+      const studentNames = sortedSubmissions.map(s => s.users.name);
+      const combinedHeaders = [...detailHeaders, ...studentNames];
+
+      const detailRows = [combinedHeaders];
+
       for (let i = 0; i < this.quiz.question_count; i++) {
         let correctCount = 0;
-        
-        this.submissions.forEach(submission => {
-          if (submission.answers[i] === this.quiz.questions[i].correctAnswer) {
-            correctCount++;
-          }
-        });
-        
-        const correctRate = Math.round((correctCount / this.submissions.length) * 100);
-        let difficulty = correctRate >= 80 ? '쉬움' : correctRate >= 50 ? '보통' : '어려움';
-        
-        questionData.push([
+        const row = [
           i + 1,
           this.quiz.questions[i].question,
-          correctCount,
-          this.submissions.length - correctCount,
-          `${correctRate}%`,
-          difficulty
-        ]);
+          '' // 정답률 자리는 계산 후 삽입
+        ];
+
+        // 각 학생의 해당 문제 정답 여부 체크
+        sortedSubmissions.forEach(submission => {
+          const isCorrect = submission.answers[i] === this.quiz.questions[i].correctAnswer;
+          row.push(isCorrect ? 'O' : 'X');
+          if (isCorrect) correctCount++;
+        });
+
+        // 정답률 계산
+        row[2] = `${Math.round((correctCount / this.submissions.length) * 100)}%`;
+        detailRows.push(row);
       }
-      
-      const ws3 = XLSX.utils.aoa_to_sheet(questionData);
-      XLSX.utils.book_append_sheet(wb, ws3, '문제별 정답률');
-      
+      const ws3 = XLSX.utils.aoa_to_sheet(detailRows);
+      XLSX.utils.book_append_sheet(wb, ws3, '문항별 정오표');
+
       // 파일 다운로드
-      const fileName = `${this.quiz.title}_분석결과_${Utils.formatDate(new Date(), 'YYYYMMDD')}.xlsx`;
+      const fileName = `${this.quiz.title}_상세분석_${Utils.formatDate(new Date(), 'YYYYMMDD')}.xlsx`;
       XLSX.writeFile(wb, fileName);
       
-      Utils.showToast('엑셀 파일이 다운로드되었습니다.', 'success');
+      Utils.showToast('상세 분석 엑셀이 다운로드되었습니다.', 'success');
       
     } catch (error) {
       console.error('Excel export error:', error);
-      Utils.handleError(error, '엑셀 내보내기 중 오류가 발생했습니다.');
+      Utils.handleError(error, '엑셀 생성 중 오류가 발생했습니다.');
     }
   }
 };
