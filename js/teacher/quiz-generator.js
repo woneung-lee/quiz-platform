@@ -8,7 +8,7 @@ const QuizGenerator = {
   uploadedFile: null,
   generatedQuestions: [],
   currentStep: 1,
-  gradeLevel: null, // 🆕 학년 선택
+  gradeLevel: 1, // 🔥 기본값 1학년
   
   // 초기화
   async init() {
@@ -165,7 +165,7 @@ const QuizGenerator = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
   
-  // 🆕 AI 문제 생성 (Supabase Edge Function 호출)
+  // AI 문제 생성 (Supabase Edge Function 호출)
   async generateQuestions() {
     const gotoStep3Btn = document.getElementById('goto-step-3');
     
@@ -184,9 +184,9 @@ const QuizGenerator = {
       const choiceCount = parseInt(document.getElementById('choice-count').value);
       const prompt = document.getElementById('quiz-prompt').value.trim();
       
-      // 🆕 학년 선택 가져오기
+      // 🔥 학년 선택 (기본값 1학년)
       const gradeSelect = document.getElementById('grade-select');
-      this.gradeLevel = gradeSelect?.value ? parseInt(gradeSelect.value) : null;
+      this.gradeLevel = gradeSelect?.value ? parseInt(gradeSelect.value) : 1;
       
       let fileContent = null;
       let fileType = null;
@@ -198,11 +198,10 @@ const QuizGenerator = {
         fileType = this.uploadedFile.type;
       }
       
-      // 🆕 학년 표시
-      const gradeText = this.gradeLevel ? `${this.gradeLevel}학년` : '초등학생';
+      const gradeText = `${this.gradeLevel}학년`;
       this.updateProgress(30, `${gradeText} 수준의 AI 문제 생성 중...`);
       
-      // 🔥 Supabase Edge Function 호출
+      // Supabase Edge Function 호출
       const { data, error } = await supabase.functions.invoke('generate-quiz', {
         body: {
           prompt,
@@ -210,7 +209,7 @@ const QuizGenerator = {
           fileType,
           questionCount,
           choiceCount,
-          gradeLevel: this.gradeLevel // 🆕 학년 전송
+          gradeLevel: this.gradeLevel
         }
       });
       
@@ -234,7 +233,6 @@ const QuizGenerator = {
         document.getElementById('generation-result').style.display = 'block';
         gotoStep3Btn.style.display = 'inline-flex';
         
-        // 🆕 학년 정보 포함 성공 메시지
         Utils.showToast(
           `${gradeText} 수준 문제 ${this.generatedQuestions.length}개가 생성되었습니다!`,
           'success'
@@ -263,8 +261,9 @@ const QuizGenerator = {
     document.getElementById('quiz-question-count-display').textContent = 
       `총 ${this.generatedQuestions.length}개 문제`;
     
-    // 선택지 번호 매핑
-    const choiceLabels = ['①', '②', '③', '④', '⑤'];
+    // 🔥 OX 퀴즈 또는 일반 선택지
+    const isOXQuiz = this.generatedQuestions.length > 0 && this.generatedQuestions[0].choices.length === 2;
+    const choiceLabels = isOXQuiz ? ['O', 'X'] : ['①', '②', '③', '④', '⑤'];
     
     let html = '';
     
